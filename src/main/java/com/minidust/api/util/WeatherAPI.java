@@ -11,16 +11,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class WeatherAPI {
-    // 날씨를 1시간 단위로 업데이트해서 DB에 저장하자.
-    /*
-    https://api.openweathermap.org/data/2.5/weather?q=도시이름&appid=cd22e7cd9f97c714f98216e2dfa32791
-    api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-    https://openweathermap.org/current
-    날씨에서는, 일단 본인의 현재 위치에 따른 날씨를 위해서 geolocation 을 통해서 api에서 날씨를 받아오자.
-    그리고 기기에서 보내주는 온/습도는 기기 내용 출력할때 같이 나갈거.
 
-    캘빈도 - 273.15 = celsius.
-     */
+//    https://openweathermap.org/current
 
     private final String API_KEY = "cd22e7cd9f97c714f98216e2dfa32791";
 

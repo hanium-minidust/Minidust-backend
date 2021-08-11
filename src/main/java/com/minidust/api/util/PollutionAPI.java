@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -28,10 +27,7 @@ public class PollutionAPI {
     List<String> sidoName = Arrays.asList("서울", "경기"); // 서울, 경기에 대해서 시험
     HashMap<String, List<Double>> stationList = new HashMap<>();
 
-    // 초, 분, 시, 일, 월, 주 순서
-    @Scheduled(cron = "0 0 * * * *")
     public void updatePollutionData(String query) {
-        updateStation(query); // TODO 이렇게 쓰면 트래픽이 너무 많다. 일단 시작할때 이거랑 같이 한번 돌고, 매달 한번씩만, 배포할때 수정하자.
         List<PollutionData> returnValue = new ArrayList<>();
         RestTemplate rest = new RestTemplate();
 
@@ -76,7 +72,6 @@ public class PollutionAPI {
         // TODO 정상적으로 업데이트가 되었는지 확인값도 필요하다.
     }
 
-    //@Scheduled(cron = "0 0 1 1 * *") // 매달 1일 새벽 1시에 업데이트
     public void updateStation(String query) {
         RestTemplate rest = new RestTemplate();
 
@@ -98,10 +93,8 @@ public class PollutionAPI {
         int status = httpStatus.value();
         String response = responseEntity.getBody();
 
-        System.out.println(response);
         JSONObject json = new JSONObject(response);
         JSONArray jsonArray = json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
-        System.out.println(jsonArray);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmY"), jsonObject.getDouble("dmX")));

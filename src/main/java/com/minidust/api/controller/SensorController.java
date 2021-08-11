@@ -1,13 +1,18 @@
 package com.minidust.api.controller;
 
+import com.minidust.api.models.Message;
 import com.minidust.api.models.Sensor;
 import com.minidust.api.models.SensorDto;
+import com.minidust.api.models.StatusEnum;
 import com.minidust.api.service.SensorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -16,41 +21,41 @@ public class SensorController {
     private final SensorService sensorService;
 
     @GetMapping("/api/data")
-    public Map<String, Object> getAllData() {
-        Map<String, Object> response = new HashMap<>();
-        for (Sensor sensor : sensorService.getAllData()) {
-            response.put("result", sensor);
-        }
-        return response;
+    public List<Sensor> getAll() {
+        return sensorService.getData();
     }
 
     @GetMapping("/api/data/{id}")
-    public Map<String, Object> getDataById(@PathVariable int id) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<Sensor> data = sensorService.getDataById(id);
+    public ResponseEntity<?> getById(@PathVariable int id) {
+        Optional<Sensor> data = sensorService.getById(id);
+        Message message = new Message();
         if (data.isPresent()) {
-            response.put("result", data.get());
+            message = new Message(StatusEnum.OK, "OK", data.get());
+            return new ResponseEntity<>(message, HttpStatus.OK);
         } else {
-            response.put("result", "FAIL");
+            message = new Message(StatusEnum.NOT_FOUND, "NOT FOUND");
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         }
-        return response;
     }
 
     @PostMapping("/api/data")
-    public int createData(@RequestBody SensorDto sensorDto) {
-        int id = sensorDto.getId();
-        Optional<Sensor> data = sensorService.getDataById(id);
-        if (data.isPresent()) {
-            sensorService.updateData(id, sensorDto);
-        } else {
-            sensorService.createData(sensorDto);
+    public ResponseEntity<?> updateOrCreate(@RequestBody @Valid SensorDto sensorDto, BindingResult errors) {
+        Message message = new Message();
+        if (errors.hasErrors()) { // 입력값이 유효한지 유효성을 확인합니다.
+            message = new Message(
+                    StatusEnum.BAD_REQUEST,
+                    errors.getFieldError().getField() + " " + errors.getAllErrors().get(0).getDefaultMessage());
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         }
-        return id;
+
+        Sensor sensor = sensorService.updateOrCreate(sensorDto.getId(), sensorDto);
+        message = new Message(StatusEnum.OK, "OK", sensor);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     @DeleteMapping("/api/data/{id}")
-    public int deleteData(@PathVariable int id) {
-        sensorService.deleteDataById(id);
+    public int deleteById(@PathVariable int id) {
+        sensorService.deleteById(id);
         return id;
     }
 }

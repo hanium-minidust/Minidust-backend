@@ -15,30 +15,42 @@ import java.util.Optional;
 public class SensorService {
     private final SensorRepository sensorRepository;
 
-    public List<Sensor> getAllData() {
+    public List<Sensor> getData() {
         return sensorRepository.findAll();
     }
 
-    public Optional<Sensor> getDataById(int id) {
+    public Optional<Sensor> getById(int id) {
         Optional<Sensor> data = sensorRepository.findById(id);
         return data;
     }
 
+//    @Transactional
+//    public Sensor updateData(int id, SensorDto sensorDto) {
+//        Sensor sensor = sensorRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+//        );
+//        sensor.update(sensorDto);
+//        return sensor;
+//    }
+//
+//    public Sensor createData(SensorDto sensorDto) {
+//        Sensor sensor = new Sensor(sensorDto);
+//        return sensorRepository.save(sensor);
+//    }
+
     @Transactional
-    public int updateData(int id, SensorDto sensorDto) {
-        Sensor sensor = sensorRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-        );
-        sensor.update(sensorDto);
-        return sensor.getId();
+    public Sensor updateOrCreate(int id, SensorDto sensorDto) {
+        Optional<Sensor> sensorOptional = sensorRepository.findById(id);
+        if (sensorOptional.isPresent()) {
+            sensorOptional.get().update(sensorDto);
+            return sensorOptional.get();
+        } else {
+            Sensor newSensor = new Sensor(sensorDto);
+            return sensorRepository.save(newSensor);
+        }
     }
 
-    public Sensor createData(SensorDto sensorDto) {
-        Sensor sensor = new Sensor(sensorDto);
-        return sensorRepository.save(sensor);
-    }
-
-    public void deleteDataById(int id) {
+    public void deleteById(int id) {
         sensorRepository.deleteById(id);
     }
 }

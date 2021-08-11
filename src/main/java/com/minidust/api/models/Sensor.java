@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Entity
@@ -14,22 +15,21 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class Sensor extends Timestamped {
 
+    @NotNull
     @Id
     private int id;
 
-    // TODO 위도와 경도값 입력했을때 한국 범위안에 존재하는지 확인하는지.
     @Column(nullable = false)
     private double latitude;
 
-    // 경도, 한국 기준 124~132
     @Column(nullable = false)
     private double longitude;
 
     @Column(nullable = false)
-    private double temperature;
+    private int temperature;
 
     @Column(nullable = false)
-    private double humidity;
+    private int humidity;
 
     @Column(nullable = false)
     private int pm25;

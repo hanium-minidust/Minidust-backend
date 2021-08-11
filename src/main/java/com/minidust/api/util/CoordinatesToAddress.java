@@ -32,7 +32,6 @@ public class CoordinatesToAddress {
         HttpStatus httpStatus = responseEntity.getStatusCode();
 //        int status = httpStatus.value(); TODO 추가적인 오류 핸들링이 필요하다.
         String response = responseEntity.getBody();
-        System.out.println(response);
 
         JSONObject json = new JSONObject(response);
         JSONArray values = json.getJSONArray("addresses");
@@ -40,7 +39,6 @@ public class CoordinatesToAddress {
         Double longitude = jsonObject.getDouble("x");
         Double latitude = jsonObject.getDouble("y");
 
-        System.out.println(Arrays.asList(longitude, latitude));
         return Arrays.asList(longitude, latitude);
     }
 
@@ -68,10 +66,10 @@ public class CoordinatesToAddress {
         JSONArray values = json.getJSONArray("results");
         JSONObject jsonObject = values.getJSONObject(0).getJSONObject("region");
         String firstAddress = jsonObject.getJSONObject("area1").getString("name"); // name -> 경기도, alias -> 경기, 기상 API 에 따라 바꿔써야 할 부분
+        String firstAlias = jsonObject.getJSONObject("area1").getString("alias");
         String secondAddress = jsonObject.getJSONObject("area2").getString("name"); // 시 단위
         String thirdAddress = jsonObject.getJSONObject("area3").getString("name"); // 동 단위
 
-        System.out.println(Arrays.asList(firstAddress, secondAddress, thirdAddress));
-        return Arrays.asList(firstAddress, secondAddress, thirdAddress);
+        return Arrays.asList(firstAddress, firstAlias, secondAddress, thirdAddress);
     }
 }
