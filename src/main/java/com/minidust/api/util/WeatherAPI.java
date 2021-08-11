@@ -37,7 +37,6 @@ public class WeatherAPI {
         String response = responseEntity.getBody();
 
         JSONObject jsonObject = new JSONObject(response);
-        System.out.println(jsonObject);
         String name = jsonObject.getString("name");
         String icon = jsonObject.getJSONArray("weather").getJSONObject(0).getString("icon");
         int temp = (int) jsonObject.getJSONObject("main").getFloat("temp");

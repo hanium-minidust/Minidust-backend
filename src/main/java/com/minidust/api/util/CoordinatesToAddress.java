@@ -16,10 +16,11 @@ public class CoordinatesToAddress {
 
     /**
      * 주소 키워드를 입력받아 경도와 위도가 담긴 리스트로 반환합니다.
+     *
      * @param query 주소 키워드를 입력받습니다.
      * @return 경도(X) LONGITUDE, 위도(Y) LATITUDE 가 담긴 리스트를 리턴합니다.
      */
-    public List<Double> getCoordinatesFromAddress(String query) {
+    public List<Double> getCoordsFromAddress(String query) {
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-NCP-APIGW-API-KEY-ID", API_KEY_ID);
@@ -28,7 +29,7 @@ public class CoordinatesToAddress {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
         ResponseEntity<String> responseEntity = rest.exchange("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" +
-                query,HttpMethod.GET, requestEntity, String.class);
+                query, HttpMethod.GET, requestEntity, String.class);
         HttpStatus httpStatus = responseEntity.getStatusCode();
 //        int status = httpStatus.value(); TODO 추가적인 오류 핸들링이 필요하다.
         String response = responseEntity.getBody();

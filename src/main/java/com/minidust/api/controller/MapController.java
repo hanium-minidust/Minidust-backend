@@ -1,15 +1,23 @@
 package com.minidust.api.controller;
 
+import com.minidust.api.models.Message;
 import com.minidust.api.util.CoordinatesToAddress;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+@Validated
 @RestController
 public class MapController {
 
@@ -21,26 +29,25 @@ public class MapController {
     }
 
     @GetMapping("/api/map/addressToCoords")
-    public HashMap<String, Double> getFromAddress(@RequestParam String query) {
+    public ResponseEntity<?> getCoordsFromAddress(@RequestParam @NotNull String query) {
         HashMap<String, Double> coordsResult = new HashMap<>();
+        List<Double> result = coordinatesToAddress.getCoordsFromAddress(query);
+        coordsResult.put("longitude", result.get(0));
+        coordsResult.put("latitude", result.get(1));
 
-        double longitude = coordinatesToAddress.getCoordinatesFromAddress(query).get(0);
-        double latitude = coordinatesToAddress.getCoordinatesFromAddress(query).get(1);
-        coordsResult.put("longitude", longitude);
-        coordsResult.put("latitude", latitude);
-        return coordsResult;
+        return new ResponseEntity<>(Message.getDefaultOkMessage(coordsResult), HttpStatus.OK);
     }
 
     @GetMapping("/api/map/coordsToAddress")
-    public LinkedHashMap<String, String> getAddressFromCoordinates(@RequestParam String lon, @RequestParam String lat) {
-        Double passedLongitude = Double.valueOf(lon);
-        Double passedLatitude = Double.valueOf(lat);
-        List<String> result = coordinatesToAddress.getAddressFromCoordinates(passedLongitude, passedLatitude);
+    public ResponseEntity<?> getAddressFromCoordinates(@RequestParam @DecimalMin("123") @DecimalMax("133") double lon,
+                                                       @RequestParam @DecimalMin("32") @DecimalMax("44") double lat) {
+        List<String> addResult = coordinatesToAddress.getAddressFromCoordinates(lon, lat);
         LinkedHashMap<String, String> addressResult = new LinkedHashMap<>();
-        addressResult.put("First", result.get(0));
-        addressResult.put("FirstAlias", result.get(1));
-        addressResult.put("Second", result.get(2));
-        addressResult.put("Third", result.get(3));
-        return addressResult;
+        addressResult.put("first", addResult.get(0));
+        addressResult.put("alias", addResult.get(1));
+        addressResult.put("second", addResult.get(2));
+        addressResult.put("third", addResult.get(3));
+
+        return new ResponseEntity<>(Message.getDefaultOkMessage(addressResult), HttpStatus.OK);
     }
 }
