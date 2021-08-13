@@ -12,10 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Component
@@ -53,8 +50,17 @@ public class PollutionAPI {
         JSONArray jsonArray = json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            if (jsonArray.getJSONObject(i).getString("pm10Value").equals("-") || jsonArray.getJSONObject(i).getString("pm25Value").equals("-")) {
-                continue; // TODO pm10Value 나 pm25Value 에 Int 가 아니라, 장비점검이나 "-" 가 들어가 있는 경우 대처가 필요하다.
+            try {
+                if (Objects.isNull(jsonArray.getJSONObject(i).get("pm25Value"))
+                        || Objects.isNull(jsonArray.getJSONObject(i).get("pm10Value"))
+                        || jsonArray.getJSONObject(i).getString("pm10Value").equals("-")
+                        || jsonArray.getJSONObject(i).getString("pm25Value").equals("-")) {
+                    continue;
+                }
+            } catch (Exception e) {
+                System.out.println(jsonArray.getJSONObject(i));
+                System.out.println(e.getMessage());
+                continue;
             }
 
             JSONObject jsonObject = jsonArray.getJSONObject(i);

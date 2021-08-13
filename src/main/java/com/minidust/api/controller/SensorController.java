@@ -20,8 +20,9 @@ public class SensorController {
     private final SensorService sensorService;
 
     @GetMapping("/api/data")
-    public List<Sensor> getAll() {
-        return sensorService.getData();
+    public ResponseEntity<?> getAll() {
+        List<Sensor> result = sensorService.getData();
+        return new ResponseEntity<>(Message.getDefaultOkMessage(result), HttpStatus.OK);
     }
 
     @GetMapping("/api/data/{id}")
