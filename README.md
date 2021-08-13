@@ -210,21 +210,23 @@
 
    - 주소에 입력 가능한 값들의 형식 : 상암동, 당왕동, 석정동 등 지명만 입력 가능
    
+     
+
    ```http
 GET /api/map/addressToCoords?query={주소}
    ```
-
-   - 출력값
+	
+	- 출력값
 	
 	  ```json
-	 {
+	   {
 	   "status":"OK",
 	   "message":"OK",
 	   "data":{
-	      "latitude":37.0204,
-	      "longitude":127.2718
+         "latitude":37.0204,
+         "longitude":127.2718
       	}
-   }
+    }
     ```
   
 2. 위도와 경도를 주소로 변환하기
