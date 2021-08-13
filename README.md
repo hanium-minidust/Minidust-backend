@@ -97,11 +97,11 @@
    - 예외 처리
      1. 해당 아이디를 가진 데이터가 없을 경우
 	        ```json
-	        {  
+	    {  
 	        "status":  "NOT_FOUND",  
 	        "message":  null,  
 	        "data":  null  
-	        }
+	    }
 	        ```
 	    
 	       
@@ -136,7 +136,7 @@
 1.  특정 도시의 모든 미세먼지 오염도 데이터 가져오기
 	
 	   ```http
-	   GET /api/pollution?query={도시이름} // 도시이름 : 서울, 경기
+	GET /api/pollution?query={도시이름} // 도시이름 : 서울, 경기
 	   ```
 
     - 출력값
@@ -210,24 +210,22 @@
 
    - 주소에 입력 가능한 값들의 형식 : 상암동, 당왕동, 석정동 등 지명만 입력 가능
    
-     
-
    ```http
 GET /api/map/addressToCoords?query={주소}
    ```
-	
-	- 출력값
+
+   - 출력값
 	
 	  ```json
 	   {
 	   "status":"OK",
 	   "message":"OK",
 	   "data":{
-         "latitude":37.0204,
-         "longitude":127.2718
+	      "latitude":37.0204,
+	      "longitude":127.2718
       	}
-    }
-    ```
+     }
+     ```
   
 2. 위도와 경도를 주소로 변환하기
 
