@@ -57,9 +57,7 @@
     - 예외 처리
     
       1. 범위 밖에 있는 값이 나올경우
-    
          - 어떤 부분의 어떤 범위 오류가 있는지 표시를 해줍니다.
-    
          ```json
          {
            "status": "BAD_REQUEST",
@@ -96,13 +94,13 @@
 
    - 예외 처리
      1. 해당 아이디를 가진 데이터가 없을 경우
-	        ```json
-	    {  
-	        "status":  "NOT_FOUND",  
-	        "message":  null,  
-	        "data":  null  
-	    }
-	        ```
+        ```json
+        {  
+            "status":  "NOT_FOUND",  
+            "message":  null,  
+            "data":  null  
+        }
+        ```
 	    
 	       
 3. 데이터 업로드하기
@@ -126,7 +124,7 @@
    - 출력값
 
      ```json
-     ID // 위에서 입력한 기기의 ID
+     ID
      ```
 
 
@@ -207,15 +205,13 @@
 ### 주소<-> 위도/경도 변환하기
 
 1. 주소를 위도와 경도로 변환하기
-
    - 주소에 입력 가능한 값들의 형식 : 상암동, 당왕동, 석정동 등 지명만 입력 가능
-   
-   ```http
-GET /api/map/addressToCoords?query={주소}
-   ```
+        ```http
+        GET /api/map/addressToCoords?query={주소}
+        ```
 
    - 출력값
-	
+
 	  ```json
 	   {
 	   "status":"OK",
@@ -228,7 +224,6 @@ GET /api/map/addressToCoords?query={주소}
      ```
   
 2. 위도와 경도를 주소로 변환하기
-
    ```http
    GET /api/map/coordsToAddress?lon={longitude}&lat={latitude}
    ```
