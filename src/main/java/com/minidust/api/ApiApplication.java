@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -18,15 +19,18 @@ import java.util.TimeZone;
 @SpringBootApplication
 public class ApiApplication {
 
+    @PostConstruct
+    void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(ApiApplication.class, args);
     }
 
-    // CommandLineRunner 를 만들자.
     @Bean
     public CommandLineRunner runner(PollutionAPI pollutionAPI) {
         return args -> {
-            TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
             System.out.println("현재시간 : " + new Date());
 
             List<String> updateList = Arrays.asList("서울", "경기");

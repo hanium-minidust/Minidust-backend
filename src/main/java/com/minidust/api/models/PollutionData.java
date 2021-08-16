@@ -4,16 +4,20 @@ package com.minidust.api.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.*;
 
 @Getter
 @NoArgsConstructor
 @Entity
 @Table(name = "pollution_data")
-public class PollutionData {
+public class PollutionData extends Timestamped {
 
-    public PollutionData(String sidoName, String stationName, Double longitude, Double latitude, int pm25, int pm10) {
+    public PollutionData(Long id, String sidoName, String stationName, Double longitude, Double latitude, int pm25, int pm10) {
+        this.id = id;
         this.sidoName = sidoName;
         this.stationName = stationName;
         this.longitude = longitude;
@@ -23,7 +27,6 @@ public class PollutionData {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
@@ -47,14 +50,19 @@ public class PollutionData {
     private Double latitude;
 
     @NotNull
-    @Min(1)
+    @Min(0)
     @Max(1000)
     @Column(nullable = false)
     private int pm25;
 
     @NotNull
-    @Min(1)
+    @Min(0)
     @Max(1000)
     @Column(nullable = false)
     private int pm10;
+
+    public void update(PollutionData pollutionData) {
+        this.pm10 = pollutionData.getPm10();
+        this.pm25 = pollutionData.getPm25();
+    }
 }

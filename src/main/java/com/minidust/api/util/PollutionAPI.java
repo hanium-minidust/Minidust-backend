@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class PollutionAPI {
     List<String> sidoName = Arrays.asList("서울", "경기"); // 서울, 경기에 대해서 시험
     HashMap<String, List<Double>> stationList = new HashMap<>();
 
+    @Transactional
     public void updatePollutionData(String query) {
         List<PollutionData> returnValue = new ArrayList<>();
         RestTemplate rest = new RestTemplate();
@@ -51,10 +53,12 @@ public class PollutionAPI {
 
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
-                if (Objects.isNull(jsonArray.getJSONObject(i).get("pm25Value"))
-                        || Objects.isNull(jsonArray.getJSONObject(i).get("pm10Value"))
+                if (jsonArray.getJSONObject(i).isNull("pm25Value")
+                        || jsonArray.getJSONObject(i).isNull("pm10Value")
                         || jsonArray.getJSONObject(i).getString("pm10Value").equals("-")
-                        || jsonArray.getJSONObject(i).getString("pm25Value").equals("-")) {
+                        || jsonArray.getJSONObject(i).getString("pm25Value").equals("-")
+                        || jsonArray.getJSONObject(i).getString("pm10Value").equals("통신장애")
+                        || jsonArray.getJSONObject(i).getString("pm25Value").equals("통신장애")) {
                     continue;
                 }
             } catch (Exception e) {
@@ -66,21 +70,29 @@ public class PollutionAPI {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             String stationName = jsonObject.getString("stationName");
             List<Double> coords = stationList.get(stationName);
+
+            Long id = (long) stationName.hashCode();
+            Optional<PollutionData> isExist = pollutionRepository.findById(id);
+
             PollutionData pollutionData = new PollutionData(
+                    id,
                     jsonObject.getString("sidoName"),
                     jsonObject.getString("stationName"),
                     coords.get(0),
                     coords.get(1),
                     jsonObject.getInt("pm25Value"),
                     jsonObject.getInt("pm10Value"));
-            pollutionRepository.save(pollutionData);
+
+            if (isExist.isPresent()) {
+                isExist.get().update(pollutionData);
+            } else {
+                pollutionRepository.save(pollutionData);
+            }
         }
-        // TODO 정상적으로 업데이트가 되었는지 확인값도 필요하다.
     }
 
     public void updateStation(String query) {
         RestTemplate rest = new RestTemplate();
-
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
                 .host("apis.data.go.kr")

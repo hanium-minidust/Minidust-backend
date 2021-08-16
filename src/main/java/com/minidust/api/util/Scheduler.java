@@ -2,11 +2,13 @@ package com.minidust.api.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+@Component
 @RequiredArgsConstructor
 public class Scheduler {
 
@@ -15,7 +17,7 @@ public class Scheduler {
     List<String> sidoName = Arrays.asList("서울", "경기");
 
     // 초, 분, 시, 일, 월, 주 순서
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 5 * * * *")
     public void pollutionDataUpdater() {
         for (String x : sidoName) {
             pollutionAPI.updatePollutionData(x);
