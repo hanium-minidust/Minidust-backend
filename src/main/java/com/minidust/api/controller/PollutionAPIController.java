@@ -22,8 +22,8 @@ public class PollutionAPIController {
 
     @GetMapping("/api/pollution")
     public ResponseEntity<?> getAllDataBySidoName(@RequestParam String query) {
-        if (query.length() < 2) {
-            return new ResponseEntity<>(Message.getDefaultBadRequestMessage(), HttpStatus.BAD_REQUEST);
+        if (query.length() != 2) {
+            throw new IllegalArgumentException("올바른 query 입력값이 아닙니다.");
         }
         List<PollutionData> result = pollutionDataService.getAllByCity(query);
         return new ResponseEntity<>(Message.getDefaultOkMessage(result), HttpStatus.OK);

@@ -71,7 +71,9 @@ public class PollutionAPI {
             String stationName = jsonObject.getString("stationName");
             List<Double> coords = stationList.get(stationName);
 
-            Long id = (long) stationName.hashCode();
+            long id = stationName.hashCode() < 0 ? (long) (stationName.hashCode() * - 1) : (long) stationName.hashCode();
+            // hashcode 의 값이 음수라면 양수로 변경해주기
+
             Optional<PollutionData> isExist = pollutionRepository.findById(id);
 
             PollutionData pollutionData = new PollutionData(

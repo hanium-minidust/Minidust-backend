@@ -16,4 +16,10 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handleConstraintViolation(ConstraintViolationException e) {
         return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
+
+    // 잘못된 요청으로 왔을때 오류로부터 핸들링 해줍시다.
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    protected ResponseEntity<?> IllegalArgumentExceptionHandler(IllegalArgumentException e) {
+        return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
 }
