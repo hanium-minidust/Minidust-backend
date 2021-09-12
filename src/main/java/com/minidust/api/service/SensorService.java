@@ -1,7 +1,7 @@
 package com.minidust.api.service;
 
+import com.minidust.api.dto.SensorDto;
 import com.minidust.api.models.Sensor;
-import com.minidust.api.models.SensorDto;
 import com.minidust.api.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,40 +15,54 @@ import java.util.Optional;
 public class SensorService {
     private final SensorRepository sensorRepository;
 
-    public List<Sensor> getData() {
+    /**
+     * 미세먼지 측정기 데이터 읽기(READ)
+     */
+    public List<Sensor> findAll() {
         return sensorRepository.findAll();
     }
 
-    public Optional<Sensor> getById(int id) {
+    public Optional<Sensor> findById(int id) {
         Optional<Sensor> data = sensorRepository.findById(id);
         return data;
     }
 
-//    @Transactional
-//    public Sensor updateData(int id, SensorDto sensorDto) {
-//        Sensor sensor = sensorRepository.findById(id).orElseThrow(
-//                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-//        );
-//        sensor.update(sensorDto);
-//        return sensor;
-//    }
-//
-//    public Sensor createData(SensorDto sensorDto) {
-//        Sensor sensor = new Sensor(sensorDto);
-//        return sensorRepository.save(sensor);
-//    }
-
+    /**
+     * 미세먼지 측정기 데이터 생성/수정(CREATE, UPDATE)
+     */
     @Transactional
-    public Sensor updateOrCreate(int id, SensorDto sensorDto) {
-        Optional<Sensor> sensorOptional = sensorRepository.findById(id);
-        if (sensorOptional.isPresent()) {
-            sensorOptional.get().update(sensorDto);
-            return sensorOptional.get();
+    public Sensor updateOrCreate(SensorDto sensorDto) {
+        if (isExistId(sensorDto.getId())) {
+            return updateData(sensorDto);
         } else {
-            Sensor newSensor = new Sensor(sensorDto);
-            return sensorRepository.save(newSensor);
+            return createData(sensorDto);
         }
     }
+
+    // 해당 ID값을 가진 데이터가 없으므로 생성합니다.
+    public Sensor createData(SensorDto sensorDto) {
+        Sensor sensor = new Sensor(sensorDto);
+        return sensorRepository.save(sensor);
+    }
+
+    // 해당 ID값을 가진 데이터가 있으므로 수정합니다.
+    @Transactional
+    public Sensor updateData(SensorDto sensorDto) {
+        // Sensor 정보를 가져옵니다. 이미 ID에 대한 검사를 진행했으므로 NULL 가능성이 없습니다.
+        Sensor sensor = sensorRepository.findById(sensorDto.getId()).get();
+        sensor.update(sensorDto);
+        return sensor;
+    }
+
+    // 해당 ID값을 가진 데이터가 있는지 확인합니다.
+    public boolean isExistId(int id) {
+        Optional<Sensor> sensor = sensorRepository.findById(id);
+        return sensor.isPresent();
+    }
+
+    /**
+     * 미세먼지 측정기 데이터 삭제(DELETE)
+     */
 
     public void deleteById(int id) {
         sensorRepository.deleteById(id);

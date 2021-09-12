@@ -23,19 +23,9 @@ public class PollutionAPIController {
     @GetMapping("/api/pollution")
     public ResponseEntity<?> getAllDataBySidoName(@RequestParam String query) {
         if (query.length() != 2) {
-            throw new IllegalArgumentException("올바른 query 입력값이 아닙니다.");
+            throw new IllegalArgumentException("올바른 주소 이름 형식이 아닙니다. 예시) 서울, 경기, 전북, 충남 등");
         }
         List<PollutionData> result = pollutionDataService.getAllByCity(query);
         return new ResponseEntity<>(Message.getDefaultOkMessage(result), HttpStatus.OK);
-    }
-
-    @GetMapping("/api/pollution/update-data")
-    public void updatePollutionData(@RequestParam String query) {
-        pollutionAPI.updatePollutionData(query);
-    }
-
-    @GetMapping("/api/pollution/update-station")
-    public void updatePollutionStation(@RequestParam String query) {
-        pollutionAPI.updatePollutionData(query);
     }
 }

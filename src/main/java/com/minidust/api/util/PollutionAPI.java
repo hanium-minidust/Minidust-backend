@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -43,9 +44,16 @@ public class PollutionAPI {
                 .encode()
                 .build();
 
-        ResponseEntity<String> responseEntity = rest.getForEntity(uriComponents.toUri(), String.class);
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = rest.getForEntity(uriComponents.toUri(), String.class);
+        } catch (RestClientException e) {
+            System.out.println("[INFO] " + new Date() + " 미세먼지 정보가 오류로 인해 업데이트 되지 않았습니다.");
+            // 서버의 오류로 업데이트가 되지 않을 경우에는 업데이트를 건너 뜁니다.
+            return;
+        }
+
         HttpStatus httpStatus = responseEntity.getStatusCode();
-//        int status = httpStatus.value(); TODO 추가적인 오류 핸들링이 필요하다.
         String response = responseEntity.getBody();
 
         JSONObject json = new JSONObject(response);
@@ -53,17 +61,9 @@ public class PollutionAPI {
 
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
-                if (jsonArray.getJSONObject(i).isNull("pm25Value")
-                        || jsonArray.getJSONObject(i).isNull("pm10Value")
-                        || jsonArray.getJSONObject(i).getString("pm10Value").equals("-")
-                        || jsonArray.getJSONObject(i).getString("pm25Value").equals("-")
-                        || jsonArray.getJSONObject(i).getString("pm10Value").equals("통신장애")
-                        || jsonArray.getJSONObject(i).getString("pm25Value").equals("통신장애")) {
-                    continue;
-                }
+                jsonArray.getJSONObject(i).getInt("pm25Value");
+                jsonArray.getJSONObject(i).getInt("pm10Value");
             } catch (Exception e) {
-                System.out.println(jsonArray.getJSONObject(i));
-                System.out.println(e.getMessage());
                 continue;
             }
 
@@ -71,9 +71,7 @@ public class PollutionAPI {
             String stationName = jsonObject.getString("stationName");
             List<Double> coords = stationList.get(stationName);
 
-            long id = stationName.hashCode() < 0 ? (long) (stationName.hashCode() * - 1) : (long) stationName.hashCode();
-            // hashcode 의 값이 음수라면 양수로 변경해주기
-
+            long id = Math.abs(stationName.hashCode());
             Optional<PollutionData> isExist = pollutionRepository.findById(id);
 
             PollutionData pollutionData = new PollutionData(
@@ -108,7 +106,14 @@ public class PollutionAPI {
                 .encode()
                 .build();
 
-        ResponseEntity<String> responseEntity = rest.getForEntity(uriComponents.toUri(), String.class);
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = rest.getForEntity(uriComponents.toUri(), String.class);
+        } catch (RestClientException e) {
+            System.out.println("[INFO] " + new Date() + " 미세먼지 측정소 정보가 오류로 인해 업데이트 되지 않았습니다.");
+            return;
+        }
+
         HttpStatus httpStatus = responseEntity.getStatusCode();
         int status = httpStatus.value();
         String response = responseEntity.getBody();

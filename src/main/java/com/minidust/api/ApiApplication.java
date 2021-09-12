@@ -22,6 +22,7 @@ public class ApiApplication {
     @PostConstruct
     void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        System.out.println("현재시간 : " + new Date());
     }
 
     public static void main(String[] args) {

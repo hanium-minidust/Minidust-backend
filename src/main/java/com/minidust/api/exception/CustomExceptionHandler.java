@@ -17,9 +17,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
-    // 잘못된 요청으로 왔을때 오류로부터 핸들링 해줍시다.
+    // IllegalArgumentException 을 핸들링합니다.
     @ExceptionHandler(value = {IllegalArgumentException.class})
     protected ResponseEntity<?> IllegalArgumentExceptionHandler(IllegalArgumentException e) {
         return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {DataNotFoundException.class})
+    protected ResponseEntity<?> DataNotFoundExceptionHandler(DataNotFoundException e) {
+        return new ResponseEntity<>(Message.getDefaultNotFoundMessage(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 }

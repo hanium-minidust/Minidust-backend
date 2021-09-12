@@ -1,17 +1,17 @@
-package com.minidust.api.models;
+package com.minidust.api.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Getter
 @NoArgsConstructor
-@Entity
-@Table(name = "weather_data")
-public class WeatherData {
+public class WeatherDataDto {
 
-    public WeatherData(String name, String icon, int temperature, int humidity) {
+    public WeatherDataDto(String name, String icon, int temperature, int humidity) {
         this.name = name;
         this.icon = icon;
         this.temperature = temperature;

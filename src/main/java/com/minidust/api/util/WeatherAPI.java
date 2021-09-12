@@ -1,6 +1,6 @@
 package com.minidust.api.util;
 
-import com.minidust.api.models.WeatherData;
+import com.minidust.api.dto.WeatherDataDto;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class WeatherAPI {
 
     private final String API_KEY = "cd22e7cd9f97c714f98216e2dfa32791";
 
-    public WeatherData getWeatherFromCoords(double longitude, double latitude) {
+    public WeatherDataDto getWeatherFromCoords(double longitude, double latitude) {
         RestTemplate rest = new RestTemplate();
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
@@ -41,6 +41,6 @@ public class WeatherAPI {
         String icon = jsonObject.getJSONArray("weather").getJSONObject(0).getString("icon");
         int temp = (int) jsonObject.getJSONObject("main").getFloat("temp");
         int humidity = (int) jsonObject.getJSONObject("main").getInt("humidity");
-        return new WeatherData(name, "https://openweathermap.org/img/wn/" + icon + ".png", temp, humidity);
+        return new WeatherDataDto(name, "https://openweathermap.org/img/wn/" + icon + ".png", temp, humidity);
     }
 }

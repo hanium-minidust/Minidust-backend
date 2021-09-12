@@ -7,10 +7,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Component
-public class CoordinatesToAddress {
+public class BiCoordsToAddr {
     private static final String API_KEY_ID = "37k5obr4wx";
     private static final String API_KEY = "HVDyYjmhhaJ0AROI4cmdBI3HINusYR3ewPmFKyZq";
 
@@ -36,6 +37,9 @@ public class CoordinatesToAddress {
 
         JSONObject json = new JSONObject(response);
         JSONArray values = json.getJSONArray("addresses");
+        if (values.length() == 0) {
+            return Collections.emptyList();
+        }
         JSONObject jsonObject = (JSONObject) values.get(0);
         Double longitude = jsonObject.getDouble("x");
         Double latitude = jsonObject.getDouble("y");

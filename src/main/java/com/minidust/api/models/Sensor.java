@@ -1,5 +1,6 @@
 package com.minidust.api.models;
 
+import com.minidust.api.dto.SensorDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -38,6 +38,10 @@ public class Message {
         return new Message(StatusEnum.NOT_FOUND, null, null);
     }
 
+    public static Message getDefaultNotFoundMessage(String message) {
+        return new Message(StatusEnum.NOT_FOUND, message, null);
+    }
+
     public static Message getDefaultOkMessage() {
         return new Message(StatusEnum.OK, null, null);
     }
