@@ -28,4 +28,9 @@ public class PollutionAPIController {
         List<PollutionData> result = pollutionDataService.getAllByCity(query);
         return new ResponseEntity<>(Message.getDefaultOkMessage(result), HttpStatus.OK);
     }
+
+    @GetMapping("/api/pollution/update")
+    public void updatePollutionData(@RequestParam String query) {
+        pollutionAPI.updatePollutionData(query);
+    }
 }
