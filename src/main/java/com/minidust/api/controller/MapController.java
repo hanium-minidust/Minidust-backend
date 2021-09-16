@@ -5,7 +5,6 @@ import com.minidust.api.dto.CoordsToAddrDto;
 import com.minidust.api.models.Message;
 import com.minidust.api.util.BiCoordsToAddr;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,16 +21,9 @@ import java.util.List;
 @RestController
 public class MapController {
 
-    private final BiCoordsToAddr biCoordsToAddr;
-
-    @Autowired
-    public MapController(BiCoordsToAddr biCoordsToAddr) {
-        this.biCoordsToAddr = biCoordsToAddr;
-    }
-
     @GetMapping("/api/map/addressToCoords")
     public ResponseEntity<?> getCoordsFromAddress(@RequestParam @Length(min = 1, max = 3) @NotNull String query) {
-        List<Double> result = biCoordsToAddr.getCoordsFromAddress(query);
+        List<Double> result = BiCoordsToAddr.getCoordsFromAddress(query);
         if (result.isEmpty()) {
             throw new IllegalArgumentException("올바른 지역 주소 형식이 아닙니다. 예시) 서울시, 성남시, 안성시, 당왕동 등");
         }
@@ -42,7 +34,7 @@ public class MapController {
     @GetMapping("/api/map/coordsToAddress")
     public ResponseEntity<?> getAddressFromCoordinates(@RequestParam @DecimalMin("123") @DecimalMax("133") double lon,
                                                        @RequestParam @DecimalMin("32") @DecimalMax("44") double lat) {
-        List<String> addResult = biCoordsToAddr.getAddressFromCoordinates(lon, lat);
+        List<String> addResult = BiCoordsToAddr.getAddressFromCoordinates(lon, lat);
         CoordsToAddrDto coordsToAddrDto = new CoordsToAddrDto(addResult.get(0), addResult.get(1), addResult.get(2), addResult.get(3));
         return new ResponseEntity<>(Message.getDefaultOkMessage(coordsToAddrDto), HttpStatus.OK);
     }

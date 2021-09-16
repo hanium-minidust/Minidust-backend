@@ -11,7 +11,6 @@ import javax.validation.ConstraintViolationException;
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
-
     @ExceptionHandler(value = {ConstraintViolationException.class})
     protected ResponseEntity<?> handleConstraintViolation(ConstraintViolationException e) {
         return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
@@ -23,6 +22,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
+    // 찾는 데이터가 없는 경우에 통합으로 오류를 처리합니다.
     @ExceptionHandler(value = {DataNotFoundException.class})
     protected ResponseEntity<?> DataNotFoundExceptionHandler(DataNotFoundException e) {
         return new ResponseEntity<>(Message.getDefaultNotFoundMessage(e.getMessage()), HttpStatus.NOT_FOUND);

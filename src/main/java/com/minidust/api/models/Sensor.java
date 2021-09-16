@@ -38,7 +38,10 @@ public class Sensor extends Timestamped {
     @Column(nullable = false)
     private int pm10;
 
-    public Sensor(SensorDto sensorDto) {
+    @Column(nullable = false)
+    private String location;
+
+    public Sensor(SensorDto sensorDto, String location) {
         this.id = sensorDto.getId();
         this.longitude = sensorDto.getLongitude();
         this.latitude = sensorDto.getLatitude();
@@ -46,9 +49,10 @@ public class Sensor extends Timestamped {
         this.humidity = sensorDto.getHumidity();
         this.pm25 = sensorDto.getPm25();
         this.pm10 = sensorDto.getPm10();
+        this.location = location;
     }
 
-    public void update(SensorDto sensorDto) {
+    public void update(SensorDto sensorDto, String location) {
         this.id = sensorDto.getId();
         this.longitude = sensorDto.getLongitude();
         this.latitude = sensorDto.getLatitude();
@@ -56,5 +60,6 @@ public class Sensor extends Timestamped {
         this.humidity = sensorDto.getHumidity();
         this.pm25 = sensorDto.getPm25();
         this.pm10 = sensorDto.getPm10();
+        this.location = location;
     }
 }

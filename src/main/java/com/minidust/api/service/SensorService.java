@@ -3,6 +3,7 @@ package com.minidust.api.service;
 import com.minidust.api.dto.SensorDto;
 import com.minidust.api.models.Sensor;
 import com.minidust.api.repository.SensorRepository;
+import com.minidust.api.util.BiCoordsToAddr;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,8 @@ public class SensorService {
 
     // 해당 ID값을 가진 데이터가 없으므로 생성합니다.
     public Sensor createData(SensorDto sensorDto) {
-        Sensor sensor = new Sensor(sensorDto);
+        String location = getLocation(sensorDto.getLongitude(), sensorDto.getLatitude());
+        Sensor sensor = new Sensor(sensorDto, location);
         return sensorRepository.save(sensor);
     }
 
@@ -50,7 +52,8 @@ public class SensorService {
     public Sensor updateData(SensorDto sensorDto) {
         // Sensor 정보를 가져옵니다. 이미 ID에 대한 검사를 진행했으므로 NULL 가능성이 없습니다.
         Sensor sensor = sensorRepository.findById(sensorDto.getId()).get();
-        sensor.update(sensorDto);
+        String location = getLocation(sensorDto.getLongitude(), sensorDto.getLatitude());
+        sensor.update(sensorDto, location);
         return sensor;
     }
 
@@ -66,5 +69,13 @@ public class SensorService {
 
     public void deleteById(int id) {
         sensorRepository.deleteById(id);
+    }
+
+    /**
+     * 측정기의 위치정보를 위한 함수입니다.
+     */
+    public String getLocation(double longitude, double latitude) {
+        List<String> result = BiCoordsToAddr.getAddressFromCoordinates(longitude, latitude);
+        return result.get(0) + " " + result.get(2);
     }
 }

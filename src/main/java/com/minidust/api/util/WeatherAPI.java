@@ -11,9 +11,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class WeatherAPI {
-
-//    https://openweathermap.org/current
-
     private final String API_KEY = "cd22e7cd9f97c714f98216e2dfa32791";
 
     public WeatherDataDto getWeatherFromCoords(double longitude, double latitude) {
