@@ -18,13 +18,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     // IllegalArgumentException 을 핸들링합니다.
     @ExceptionHandler(value = {IllegalArgumentException.class})
-    protected ResponseEntity<?> IllegalArgumentExceptionHandler(IllegalArgumentException e) {
+    protected ResponseEntity<?> illegalArgumentExceptionHandler(IllegalArgumentException e) {
         return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     // 찾는 데이터가 없는 경우에 통합으로 오류를 처리합니다.
     @ExceptionHandler(value = {DataNotFoundException.class})
-    protected ResponseEntity<?> DataNotFoundExceptionHandler(DataNotFoundException e) {
+    protected ResponseEntity<?> dataNotFoundExceptionHandler(DataNotFoundException e) {
         return new ResponseEntity<>(Message.getDefaultNotFoundMessage(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {GpsNotValidException.class})
+    protected ResponseEntity<?> gpsNotValidExceptionHandler(GpsNotValidException e) {
+        return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }

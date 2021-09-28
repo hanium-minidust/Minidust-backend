@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+// TODO Exception 처리는 Service 단으로 넘어가자. 그래야 테스트케이스 작성이 가능할 것 같다.
+
 @RequiredArgsConstructor
 @RestController
 public class SensorController {

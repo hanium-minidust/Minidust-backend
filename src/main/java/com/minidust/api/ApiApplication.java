@@ -1,6 +1,6 @@
 package com.minidust.api;
 
-import com.minidust.api.util.PollutionAPI;
+import com.minidust.api.util.PollutionApi;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,7 +30,7 @@ public class ApiApplication {
     }
 
     @Bean
-    public CommandLineRunner runner(PollutionAPI pollutionAPI) {
+    public CommandLineRunner runner(PollutionApi pollutionAPI) {
         return args -> {
             System.out.println("현재시간 : " + new Date());
 

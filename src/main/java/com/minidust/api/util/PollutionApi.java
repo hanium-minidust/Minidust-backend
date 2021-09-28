@@ -1,9 +1,7 @@
 package com.minidust.api.util;
 
 import com.minidust.api.models.PollutionData;
-import com.minidust.api.repository.PollutionRepository;
 import com.minidust.api.service.PollutionApiService;
-import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,19 +14,24 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /*
 TODO
 클래스도 관심사에 따라 분리? PollutionDataAPI / PollutionStationAPI ?
 PollutionStationAPI 도 메소드 분리를 하자.
  */
-@RequiredArgsConstructor
 @Component
-public class PollutionAPI {
-    private final PollutionRepository pollutionRepository;
+public class PollutionApi {
+    private static final String API_KEY = "rD91vycFGdhMeipqQIuYBD4bhZKf/vYOFsxWwoWwWlV9HLbonxD22rOLOiuEokmR9Ge2b7qCrqNUpHzSz7W7hQ==";
     private final PollutionApiService pollutionApiService;
-    private final String API_KEY = "rD91vycFGdhMeipqQIuYBD4bhZKf/vYOFsxWwoWwWlV9HLbonxD22rOLOiuEokmR9Ge2b7qCrqNUpHzSz7W7hQ==";
+
+    public PollutionApi(PollutionApiService pollutionApiService) {
+        this.pollutionApiService = pollutionApiService;
+    }
 
     //List<String> sidoName = Arrays.asList("서울", "부산", "대구", "인천", "광주", "대전", "울산", "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주", "세종");
     List<String> sidoName = Arrays.asList("서울", "경기"); // 서울, 경기에 대해서 시험
@@ -55,8 +58,10 @@ public class PollutionAPI {
                 }
             }
         } catch (RestClientException e) {
+            // 서버 오류로 접속이 불가능했을때 발생하는 오류입니다.
             System.out.println("RESTClientException 발생");
         } catch (JSONException e) {
+            // 서버는 접속이 가능하나, JSON 타입이 아닌 xml 로 반환되는 경우에 발생합니다.(통신장애나 API 점검시간의 경우)
             System.out.println("JSONException 발생");
         } catch (Exception e) {
             // 추가로 발생할 수 있는 예외들을 대비하기 위해서
@@ -66,7 +71,7 @@ public class PollutionAPI {
     }
 
     // API에서 정보 가져오기
-    public ResponseEntity<String> fetchPollutionDataFromApi(String query) {
+    public ResponseEntity<String> fetchPollutionDataFromApi(String query) throws RestClientException {
         RestTemplate rest = new RestTemplate();
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
@@ -86,7 +91,7 @@ public class PollutionAPI {
     }
 
     // 가져온 정보를 JSONArray 형태로 변환하기
-    public JSONArray entityToJsonArray(ResponseEntity<String> responseEntity) {
+    public JSONArray entityToJsonArray(ResponseEntity<String> responseEntity) throws JSONException {
         String response = responseEntity.getBody();
 //        HttpStatus httpStatus = responseEntity.getStatusCode();
         JSONObject json = new JSONObject(response);
@@ -94,28 +99,20 @@ public class PollutionAPI {
     }
 
     // JSONArray 내부의 JSONObject 들을 Database 로 업로드하기
-    public void JsonObjectToDatabase(JSONObject jsonObject) {
+    public void JsonObjectToDatabase(JSONObject jsonObject) throws JSONException {
         String stationName = jsonObject.getString("stationName");
         List<Double> coords = stationList.get(stationName);
 
         long id = Math.abs(stationName.hashCode());
-        Optional<PollutionData> pollutionDataOptional = pollutionRepository.findById(id);
-
-        PollutionData pollutionData = new PollutionData(
-                id,
-                jsonObject.getString("sidoName"),
-                jsonObject.getString("stationName"),
-                coords.get(0),
-                coords.get(1),
-                jsonObject.getInt("pm25Value"),
-                jsonObject.getInt("pm10Value"));
-
-//        if (pollutionDataOptional.isPresent()) {
-//            pollutionDataOptional.get().update(pollutionData);
-//        } else {
-//            pollutionRepository.save(pollutionData);
-//        }
-        pollutionApiService.uploadData(pollutionData);
+        pollutionApiService.uploadData(
+                new PollutionData(
+                        id,
+                        jsonObject.getString("sidoName"),
+                        jsonObject.getString("stationName"),
+                        coords.get(0),
+                        coords.get(1),
+                        jsonObject.getInt("pm25Value"),
+                        jsonObject.getInt("pm10Value")));
     }
 
     /**
@@ -152,6 +149,7 @@ public class PollutionAPI {
         JSONArray jsonArray = json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
+            // TODO Map 자료형에 가지고 있을... 건지, 아니면 DB에 업로드를 할지. 객체 하나 만들어서, String 저장소 이름, double x, y
             stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmY"), jsonObject.getDouble("dmX")));
         }
     }

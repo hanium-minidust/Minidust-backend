@@ -73,7 +73,7 @@ call next value for hibernate_sequence [90036-200]
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:215)
 	at com.sun.proxy.$Proxy109.save(Unknown Source)
-	at com.minidust.api.util.PollutionAPI.updatePollutionData(PollutionAPI.java:70)
+	at com.minidust.api.util.PollutionApi.updatePollutionData(PollutionAPI.java:70)
 	at com.minidust.api.ApiApplication.lambda$runner$0(ApiApplication.java:35)
 	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:791)
 	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:775)

@@ -15,6 +15,8 @@ public class BiCoordsToAddr {
     private static final String API_KEY_ID = "37k5obr4wx";
     private static final String API_KEY = "HVDyYjmhhaJ0AROI4cmdBI3HINusYR3ewPmFKyZq";
 
+    // 둘에 대해 검색결과가 없는 경우에 대한 처리
+
     /**
      * 주소 -> 경도(Longitude), 위도(Latitude)
      *
@@ -32,9 +34,10 @@ public class BiCoordsToAddr {
         ResponseEntity<String> responseEntity = rest.exchange("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" +
                 query, HttpMethod.GET, requestEntity, String.class);
         HttpStatus httpStatus = responseEntity.getStatusCode();
-//        int status = httpStatus.value(); TODO 추가적인 오류 핸들링이 필요하다.
+        int status = httpStatus.value();
         String response = responseEntity.getBody();
 
+        // TODO 여기에서 JSONException 발생 할텐데.
         JSONObject json = new JSONObject(response);
         JSONArray values = json.getJSONArray("addresses");
         if (values.length() == 0) {

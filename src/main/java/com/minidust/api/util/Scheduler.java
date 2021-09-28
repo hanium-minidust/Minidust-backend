@@ -12,11 +12,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Scheduler {
 
-    private final PollutionAPI pollutionAPI;
+    private final PollutionApi pollutionAPI;
 
     List<String> sidoName = Arrays.asList("서울", "경기");
 
-    // 초, 분, 시, 일, 월, 주 순서
+    // 매 시간 5분에 미세먼지 오염도 정보를 업데이트 합니다.
     @Scheduled(cron = "0 5 * * * *")
     public void pollutionDataUpdater() {
         for (String x : sidoName) {
@@ -26,6 +26,8 @@ public class Scheduler {
     }
 
     // 초, 분, 시, 일, 월, 주 순서
+    // 미세먼지 측정소 정보를 업데이트
+    // 매달 1일 새벽 1시에 업데이트가 진행됩니다.
     @Scheduled(cron = "0 0 1 1 * *")
     public void pollutionStationUpdater() {
         for (String x : sidoName) {

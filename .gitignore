@@ -38,3 +38,10 @@ out/
 
 ### Text File ###
 .txt
+
+### Tomcat logs ###
+logs/
+
+### properties File ###
+.properties
+application.properties
