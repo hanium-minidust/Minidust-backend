@@ -13,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,14 +32,13 @@ public class PollutionApi {
         this.pollutionApiService = pollutionApiService;
     }
 
-    //List<String> sidoName = Arrays.asList("서울", "부산", "대구", "인천", "광주", "대전", "울산", "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주", "세종");
-    List<String> sidoName = Arrays.asList("서울", "경기"); // 서울, 경기에 대해서 시험
+    List<String> sidoName = Arrays.asList("서울", "경기");
     HashMap<String, List<Double>> stationList = new HashMap<>();
 
     /**
      * 미세먼지 API에서 미세먼지 정보 가져오기
      */
-    @Transactional
+//    @Transactional
     public void updatePollutionData(String query) {
         ResponseEntity<String> responseEntity;
         try {
@@ -105,14 +103,15 @@ public class PollutionApi {
 
         long id = Math.abs(stationName.hashCode());
         pollutionApiService.uploadData(
-                new PollutionData(
-                        id,
-                        jsonObject.getString("sidoName"),
-                        jsonObject.getString("stationName"),
-                        coords.get(0),
-                        coords.get(1),
-                        jsonObject.getInt("pm25Value"),
-                        jsonObject.getInt("pm10Value")));
+                PollutionData.builder()
+                        .id(id)
+                        .sidoName(jsonObject.getString("sidoName"))
+                        .stationName(jsonObject.getString("stationName"))
+                        .latitude(coords.get(0))
+                        .longitude(coords.get(1))
+                        .pm10(jsonObject.getInt("pm10Value"))
+                        .pm25(jsonObject.getInt("pm25Value"))
+                        .build());
     }
 
     /**
@@ -149,8 +148,7 @@ public class PollutionApi {
         JSONArray jsonArray = json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            // TODO Map 자료형에 가지고 있을... 건지, 아니면 DB에 업로드를 할지. 객체 하나 만들어서, String 저장소 이름, double x, y
-            stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmY"), jsonObject.getDouble("dmX")));
+            stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmX"), jsonObject.getDouble("dmY")));
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.minidust.api.service;
 
 import com.minidust.api.dto.SensorDto;
+import com.minidust.api.exception.DataNotFoundException;
 import com.minidust.api.models.Sensor;
 import com.minidust.api.repository.SensorRepository;
 import com.minidust.api.util.BiCoordsToAddr;
@@ -23,9 +24,8 @@ public class SensorService {
         return sensorRepository.findAll();
     }
 
-    public Optional<Sensor> findById(int id) {
-        Optional<Sensor> data = sensorRepository.findById(id);
-        return data;
+    public Sensor findById(int id) {
+        return sensorRepository.findById(id).orElseThrow(() -> new DataNotFoundException("해당 ID값을 가진 데이터를 찾을 수 없습니다."));
     }
 
     /**
@@ -51,7 +51,7 @@ public class SensorService {
     @Transactional
     public Sensor updateData(SensorDto sensorDto) {
         // Sensor 정보를 가져옵니다. 이미 ID에 대한 검사를 진행했으므로 NULL 가능성이 없습니다.
-        Sensor sensor = sensorRepository.findById(sensorDto.getId()).get();
+        Sensor sensor = sensorRepository.findById(sensorDto.getId()).orElseThrow(() -> new IllegalArgumentException());
         String location = getLocation(sensorDto.getLongitude(), sensorDto.getLatitude());
         sensor.update(sensorDto, location);
         return sensor;
@@ -66,7 +66,6 @@ public class SensorService {
     /**
      * 미세먼지 측정기 데이터 삭제(DELETE)
      */
-
     public void deleteById(int id) {
         sensorRepository.deleteById(id);
     }
@@ -76,6 +75,17 @@ public class SensorService {
      */
     public String getLocation(double longitude, double latitude) {
         List<String> result = BiCoordsToAddr.getAddressFromCoordinates(longitude, latitude);
+        if (!isCorrectCoords(longitude, latitude)) {
+            return "위치사용 불가";
+        }
         return result.get(0) + " " + result.get(2);
+    }
+
+
+    // 위도와 경도가 범위 내에 있는지 확인합니다.
+    public boolean isCorrectCoords(double longitude, double latitude) {
+        int longitudeInt = (int) longitude; // 123~133
+        int latitudeInt = (int) latitude; // 32~44
+        return longitudeInt < 134 && longitudeInt > 122 && latitudeInt < 45 && latitudeInt > 31;
     }
 }

@@ -1,6 +1,7 @@
 package com.minidust.api.models;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.*;
 
+@Builder
 @Getter
 @NoArgsConstructor
 @Entity

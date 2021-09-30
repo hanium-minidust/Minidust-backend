@@ -57,7 +57,7 @@ public class BiCoordsToAddr {
      * @param latitude  위도를 인자로 받습니다.
      * @return 도, 시, 동의 순서가 담긴 String의 List가 리턴됩니다. ex) [경기도, 안성시, 당왕동]
      */
-    public static List<String> getAddressFromCoordinates(Double longitude, Double latitude) {
+    public static List<String> getAddressFromCoordinates(double longitude, double latitude) {
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-NCP-APIGW-API-KEY-ID", API_KEY_ID);
