@@ -5,6 +5,7 @@ import com.minidust.api.service.PollutionApiService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -49,13 +50,13 @@ public class PollutionDataApi {
             }
         } catch (RestClientException e) {
             // 서버 오류로 접속이 불가능했을때 발생하는 오류입니다.
-            System.out.println("RESTClientException 발생");
+            System.out.println("미세먼지 데이터 업데이트 부분 RESTClientException 발생");
         } catch (JSONException e) {
             // 서버는 접속이 가능하나, JSON 타입이 아닌 xml 로 반환되는 경우에 발생합니다.(통신장애나 API 점검시간의 경우)
-            System.out.println("JSONException 발생");
+            System.out.println("미세먼지 데이터 업데이트 부분 JSONException 발생");
         } catch (Exception e) {
             // 추가로 발생할 수 있는 예외들을 대비하기 위해서
-            System.out.println("[WARN]" + new Date() + "Exception 발생");
+            System.out.println("[WARN]" + new Date() + "미세먼지 데이터 업데이트 부분 Exception 발생");
             e.printStackTrace();
         }
     }
@@ -81,9 +82,12 @@ public class PollutionDataApi {
     }
 
     // 가져온 정보를 JSONArray 형태로 변환하기
-    public JSONArray entityToJsonArray(ResponseEntity<String> responseEntity) throws JSONException {
+    public JSONArray entityToJsonArray(ResponseEntity<String> responseEntity) throws JSONException, RestClientException {
         String response = responseEntity.getBody();
-//        HttpStatus httpStatus = responseEntity.getStatusCode();
+        HttpStatus httpStatus = responseEntity.getStatusCode();
+        if (!httpStatus.is2xxSuccessful()) {
+            throw new RestClientException("미세먼지 측정소 서버가 200을 리턴하지 않았습니다.");
+        }
         JSONObject json = new JSONObject(response);
         return json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
     }

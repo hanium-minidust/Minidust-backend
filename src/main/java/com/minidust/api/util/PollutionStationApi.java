@@ -1,6 +1,7 @@
 package com.minidust.api.util;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,29 @@ public class PollutionStationApi {
      * 미세먼지 측정소 API에서 측정소, 위도, 경도 정보 가져오기
      */
     public void updateStation(String query) {
+        try {
+            ResponseEntity<String> responseEntity = fetchPollutionStationApi(query);
+            HttpStatus httpStatus = responseEntity.getStatusCode();
+            int status = httpStatus.value();
+
+            if (status != 200) {
+                throw new RestClientException("미세먼지 측정소 API 서버가 200 을 반환하지 않았습니다.");
+            }
+
+            JSONArray jsonArray = entityToJsonArray(responseEntity); // ResponseEntity -> JsonArray
+            savePollutionStationByJsonArray(jsonArray); // JsonArray -> Into HashMap
+
+        } catch (RestClientException restClientException) {
+            System.out.println("미세먼지 측정소 업데이트 부분 RESTClientException 발생");
+        } catch (JSONException jsonException) {
+            System.out.println("미세먼지 측정소 업데이트 부분 JSONException 발생");
+        } catch (Exception exception) {
+            System.out.println("[WARN]" + new Date() + "미세먼지 측정소 업데이트 부분 Exception 발생");
+            exception.printStackTrace();
+        }
+    }
+
+    public ResponseEntity<String> fetchPollutionStationApi(String query) {
         RestTemplate rest = new RestTemplate();
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
@@ -38,20 +62,16 @@ public class PollutionStationApi {
                 .encode()
                 .build();
 
-        ResponseEntity<String> responseEntity;
-        try {
-            responseEntity = rest.getForEntity(uriComponents.toUri(), String.class);
-        } catch (RestClientException e) {
-            System.out.println("[INFO] " + new Date() + " 미세먼지 측정소 정보가 오류로 인해 업데이트 되지 않았습니다.");
-            return;
-        }
+        return rest.getForEntity(uriComponents.toUri(), String.class);
+    }
 
-        HttpStatus httpStatus = responseEntity.getStatusCode();
-        int status = httpStatus.value();
+    public JSONArray entityToJsonArray(ResponseEntity<String> responseEntity) {
         String response = responseEntity.getBody();
-
         JSONObject json = new JSONObject(response);
-        JSONArray jsonArray = json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
+        return json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
+    }
+
+    public void savePollutionStationByJsonArray(JSONArray jsonArray) {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmX"), jsonObject.getDouble("dmY")));
