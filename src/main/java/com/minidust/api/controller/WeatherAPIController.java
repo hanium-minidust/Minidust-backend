@@ -23,6 +23,6 @@ public class WeatherAPIController {
     public ResponseEntity<?> getWeatherFromCoords(@RequestParam @DecimalMin("123") @DecimalMax("133") double lon,
                                                   @RequestParam @DecimalMin("32") @DecimalMax("44") double lat) {
         WeatherDataDto weatherDataDto = weatherService.getWeatherFromCoords(lon, lat);
-        return ResponseEntity.ok(Message.getDefaultOkMessage(weatherDataDto));
+        return ResponseEntity.ok(Message.ok(weatherDataDto));
     }
 }

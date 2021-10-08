@@ -25,7 +25,7 @@ public class PollutionAPIController {
             throw new IllegalArgumentException("올바른 주소 이름 형식이 아닙니다. 예시) 서울, 경기, 전북, 충남 등");
         }
         List<PollutionData> result = pollutionDataService.getAllByCity(query);
-        return ResponseEntity.ok(Message.getDefaultOkMessage(result));
+        return ResponseEntity.ok(Message.ok(result));
     }
 
 

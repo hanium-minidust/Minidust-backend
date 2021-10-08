@@ -27,7 +27,7 @@ public class MapController {
             throw new IllegalArgumentException("올바른 지역 주소 형식이 아닙니다. 예시) 서울시, 성남시, 안성시, 당왕동 등");
         }
         AddrToCoordsDto addrToCoordsDto = new AddrToCoordsDto(result.get(0), result.get(1));
-        return ResponseEntity.ok(Message.getDefaultOkMessage(addrToCoordsDto));
+        return ResponseEntity.ok(Message.ok(addrToCoordsDto));
     }
 
     @GetMapping("/api/map/coordsToAddress")
@@ -35,6 +35,6 @@ public class MapController {
                                                        @RequestParam @DecimalMin("32") @DecimalMax("44") double lat) {
         List<String> addResult = BiCoordsToAddr.getAddressFromCoordinates(lon, lat);
         CoordsToAddrDto coordsToAddrDto = new CoordsToAddrDto(addResult.get(0), addResult.get(1), addResult.get(2), addResult.get(3));
-        return ResponseEntity.ok(Message.getDefaultOkMessage(coordsToAddrDto));
+        return ResponseEntity.ok(Message.ok(coordsToAddrDto));
     }
 }

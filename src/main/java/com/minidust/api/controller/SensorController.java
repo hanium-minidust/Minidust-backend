@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-// TODO Exception 처리는 Service 단으로 넘어가자. 그래야 테스트케이스 작성이 가능할 것 같다.
 // https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc <- 공부
 
 @RequiredArgsConstructor
@@ -23,13 +22,13 @@ public class SensorController {
     @GetMapping("/api/sensor")
     public ResponseEntity<Message> findAll() {
         List<Sensor> result = sensorService.findAll();
-        return ResponseEntity.ok(Message.getDefaultOkMessage(result));
+        return ResponseEntity.ok(Message.ok(result));
     }
 
     @GetMapping("/api/sensor/{id}")
     public ResponseEntity<Message> findById(@PathVariable int id) {
         Sensor sensor = sensorService.findById(id);
-        return ResponseEntity.ok(Message.getDefaultOkMessage(sensor));
+        return ResponseEntity.ok(Message.ok(sensor));
     }
 
     @PostMapping("/api/sensor")
@@ -38,12 +37,12 @@ public class SensorController {
             throw new IllegalArgumentException(errors.getAllErrors().get(0).getDefaultMessage());
         }
         Sensor sensor = sensorService.updateOrCreate(sensorDto);
-        return ResponseEntity.ok(Message.getDefaultOkMessage(sensor));
+        return ResponseEntity.ok(Message.ok(sensor));
     }
 
     @DeleteMapping("/api/sensor/{id}")
     public ResponseEntity<Message> deleteById(@PathVariable int id) {
         sensorService.deleteById(id);
-        return ResponseEntity.ok(Message.getDefaultOkMessage(id));
+        return ResponseEntity.ok(Message.ok(id));
     }
 }
