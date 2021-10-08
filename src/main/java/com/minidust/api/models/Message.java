@@ -26,27 +26,27 @@ public class Message {
         this.data = data;
     }
 
-    public static Message getDefaultBadRequestMessage() {
+    public static Message badRequest() {
         return new Message(StatusEnum.BAD_REQUEST, null, null);
     }
 
-    public static Message getDefaultBadRequestMessage(String message) {
+    public static Message badRequest(String message) {
         return new Message(StatusEnum.BAD_REQUEST, message, null);
     }
 
-    public static Message getDefaultNotFoundMessage() {
+    public static Message notFound() {
         return new Message(StatusEnum.NOT_FOUND, null, null);
     }
 
-    public static Message getDefaultNotFoundMessage(String message) {
+    public static Message notFound(String message) {
         return new Message(StatusEnum.NOT_FOUND, message, null);
     }
 
-    public static Message getDefaultOkMessage() {
+    public static Message ok() {
         return new Message(StatusEnum.OK, null, null);
     }
 
-    public static Message getDefaultOkMessage(Object data) {
+    public static Message ok(Object data) {
         return new Message(StatusEnum.OK, "OK", data);
     }
 }

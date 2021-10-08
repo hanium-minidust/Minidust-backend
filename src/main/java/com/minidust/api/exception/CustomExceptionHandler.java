@@ -13,23 +13,23 @@ import javax.validation.ConstraintViolationException;
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {ConstraintViolationException.class})
     protected ResponseEntity<?> handleConstraintViolation(ConstraintViolationException e) {
-        return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(Message.badRequest(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     // IllegalArgumentException 을 핸들링합니다.
     @ExceptionHandler(value = {IllegalArgumentException.class})
     protected ResponseEntity<?> illegalArgumentExceptionHandler(IllegalArgumentException e) {
-        return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(Message.badRequest(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     // 찾는 데이터가 없는 경우에 통합으로 오류를 처리합니다.
     @ExceptionHandler(value = {DataNotFoundException.class})
     protected ResponseEntity<?> dataNotFoundExceptionHandler(DataNotFoundException e) {
-        return new ResponseEntity<>(Message.getDefaultNotFoundMessage(e.getMessage()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(Message.notFound(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = {GpsNotValidException.class})
     protected ResponseEntity<?> gpsNotValidExceptionHandler(GpsNotValidException e) {
-        return new ResponseEntity<>(Message.getDefaultBadRequestMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(Message.badRequest(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }
