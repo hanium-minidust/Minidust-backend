@@ -12,7 +12,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Scheduler {
 
-    private final PollutionApi pollutionAPI;
+    private final PollutionDataApi pollutionDataAPI;
+    private final PollutionStationApi pollutionStationApi;
 
     List<String> sidoName = Arrays.asList("서울", "경기");
 
@@ -20,7 +21,7 @@ public class Scheduler {
     @Scheduled(cron = "0 5 * * * *")
     public void pollutionDataUpdater() {
         for (String x : sidoName) {
-            pollutionAPI.updatePollutionData(x);
+            pollutionDataAPI.updatePollutionData(x);
         }
         System.out.println(new Date() + " 미세먼지 데이터가 업데이트 되었습니다.");
     }
@@ -31,7 +32,7 @@ public class Scheduler {
     @Scheduled(cron = "0 0 1 1 * *")
     public void pollutionStationUpdater() {
         for (String x : sidoName) {
-            pollutionAPI.updateStation(x);
+            pollutionStationApi.updateStation(x);
         }
         System.out.println(new Date() + " 미세먼지 측정소 데이터가 업데이트 되었습니다.");
     }

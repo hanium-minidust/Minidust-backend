@@ -1,6 +1,7 @@
 package com.minidust.api;
 
-import com.minidust.api.util.PollutionApi;
+import com.minidust.api.util.PollutionDataApi;
+import com.minidust.api.util.PollutionStationApi;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,14 +31,14 @@ public class ApiApplication {
     }
 
     @Bean
-    public CommandLineRunner runner(PollutionApi pollutionAPI) {
+    public CommandLineRunner runner(PollutionDataApi pollutionDataAPI, PollutionStationApi pollutionStationApi) {
         return args -> {
             System.out.println("현재시간 : " + new Date());
 
             List<String> updateList = Arrays.asList("서울", "경기");
             for (String x : updateList) {
-                pollutionAPI.updateStation(x);
-                pollutionAPI.updatePollutionData(x);
+                pollutionStationApi.updateStation(x);
+                pollutionDataAPI.updatePollutionData(x);
             }
         };
     }

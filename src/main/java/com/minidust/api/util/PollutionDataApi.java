@@ -5,7 +5,6 @@ import com.minidust.api.service.PollutionApiService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -15,25 +14,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-/*
-TODO
-클래스도 관심사에 따라 분리? PollutionDataAPI / PollutionStationAPI ?
-PollutionStationAPI 도 메소드 분리를 하자.
- */
 @Component
-public class PollutionApi {
+public class PollutionDataApi {
     private static final String API_KEY = "rD91vycFGdhMeipqQIuYBD4bhZKf/vYOFsxWwoWwWlV9HLbonxD22rOLOiuEokmR9Ge2b7qCrqNUpHzSz7W7hQ==";
     private final PollutionApiService pollutionApiService;
 
-    public PollutionApi(PollutionApiService pollutionApiService) {
+    public PollutionDataApi(PollutionApiService pollutionApiService) {
         this.pollutionApiService = pollutionApiService;
     }
 
     List<String> sidoName = Arrays.asList("서울", "경기");
-    HashMap<String, List<Double>> stationList = new HashMap<>();
 
     /**
      * 미세먼지 API에서 미세먼지 정보 가져오기
@@ -99,7 +91,7 @@ public class PollutionApi {
     // JSONArray 내부의 JSONObject 들을 Database 로 업로드하기
     public void JsonObjectToDatabase(JSONObject jsonObject) throws JSONException {
         String stationName = jsonObject.getString("stationName");
-        List<Double> coords = stationList.get(stationName);
+        List<Double> coords = PollutionStationApi.stationList.get(stationName);
 
         long id = Math.abs(stationName.hashCode());
         pollutionApiService.uploadData(
@@ -112,43 +104,5 @@ public class PollutionApi {
                         .pm10(jsonObject.getInt("pm10Value"))
                         .pm25(jsonObject.getInt("pm25Value"))
                         .build());
-    }
-
-    /**
-     * 미세먼지 측정소 API에서 측정소, 위도, 경도 정보 가져오기
-     */
-    public void updateStation(String query) {
-        RestTemplate rest = new RestTemplate();
-        UriComponents uriComponents = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host("apis.data.go.kr")
-                .path("/B552584/MsrstnInfoInqireSvc/getMsrstnList")
-                .queryParam("serviceKey", API_KEY)
-                .queryParam("returnType", "json")
-                .queryParam("numOfRows", "500")
-                .queryParam("pageNo", "1")
-                .queryParam("addr", query)
-                .queryParam("ver", "1.0")
-                .encode()
-                .build();
-
-        ResponseEntity<String> responseEntity;
-        try {
-            responseEntity = rest.getForEntity(uriComponents.toUri(), String.class);
-        } catch (RestClientException e) {
-            System.out.println("[INFO] " + new Date() + " 미세먼지 측정소 정보가 오류로 인해 업데이트 되지 않았습니다.");
-            return;
-        }
-
-        HttpStatus httpStatus = responseEntity.getStatusCode();
-        int status = httpStatus.value();
-        String response = responseEntity.getBody();
-
-        JSONObject json = new JSONObject(response);
-        JSONArray jsonArray = json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmX"), jsonObject.getDouble("dmY")));
-        }
     }
 }

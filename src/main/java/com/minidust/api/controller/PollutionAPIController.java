@@ -3,7 +3,7 @@ package com.minidust.api.controller;
 import com.minidust.api.models.Message;
 import com.minidust.api.models.PollutionData;
 import com.minidust.api.service.PollutionDataService;
-import com.minidust.api.util.PollutionApi;
+import com.minidust.api.util.PollutionDataApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 public class PollutionAPIController {
 
-    private final PollutionApi pollutionAPI;
+    private final PollutionDataApi pollutionDataAPI;
     private final PollutionDataService pollutionDataService;
 
     @GetMapping("/api/pollution")
@@ -31,6 +31,6 @@ public class PollutionAPIController {
 
     @GetMapping("/api/pollution/update")
     public void updatePollutionData(@RequestParam String query) {
-        pollutionAPI.updatePollutionData(query);
+        pollutionDataAPI.updatePollutionData(query);
     }
 }

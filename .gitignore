@@ -45,3 +45,5 @@ logs/
 ### properties File ###
 .properties
 application.properties
+
+.db

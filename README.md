@@ -19,7 +19,7 @@
 
 1. 모든 측정 결과 가져오기
     ```http
-    GET /api/data
+    GET /api/sensor
     ```
     
 	- 출력값
@@ -70,7 +70,7 @@
 
 2. 특정 기기의 데이터를 고유번호를 이용해 가져오기
    ```http
-   GET /api/data/{id}
+   GET /api/sensor/{id}
    ```
 
    - 출력값
@@ -106,7 +106,7 @@
 	       
 3. 데이터 업로드하기
 	```http
-	POST /api/data
+	POST /api/sensor
 	```
 
    - 입력값
