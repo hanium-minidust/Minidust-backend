@@ -20,19 +20,19 @@ import java.util.List;
 public class SensorController {
     private final SensorService sensorService;
 
-    @GetMapping("/api/data")
+    @GetMapping("/api/sensor")
     public ResponseEntity<Message> findAll() {
         List<Sensor> result = sensorService.findAll();
         return ResponseEntity.ok(Message.getDefaultOkMessage(result));
     }
 
-    @GetMapping("/api/data/{id}")
+    @GetMapping("/api/sensor/{id}")
     public ResponseEntity<Message> findById(@PathVariable int id) {
         Sensor sensor = sensorService.findById(id);
         return ResponseEntity.ok(Message.getDefaultOkMessage(sensor));
     }
 
-    @PostMapping("/api/data")
+    @PostMapping("/api/sensor")
     public ResponseEntity<Message> uploadData(@RequestBody @Valid SensorDto sensorDto, BindingResult errors) {
         if (errors.hasErrors()) {
             throw new IllegalArgumentException(errors.getAllErrors().get(0).getDefaultMessage());
@@ -41,7 +41,7 @@ public class SensorController {
         return ResponseEntity.ok(Message.getDefaultOkMessage(sensor));
     }
 
-    @DeleteMapping("/api/data/{id}")
+    @DeleteMapping("/api/sensor/{id}")
     public ResponseEntity<Message> deleteById(@PathVariable int id) {
         sensorService.deleteById(id);
         return ResponseEntity.ok(Message.getDefaultOkMessage(id));
