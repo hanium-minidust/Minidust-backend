@@ -47,7 +47,7 @@ public class PollutionStationApi {
         }
     }
 
-    public ResponseEntity<String> fetchPollutionStationApi(String query) {
+    private ResponseEntity<String> fetchPollutionStationApi(String query) {
         RestTemplate rest = new RestTemplate();
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
@@ -65,13 +65,13 @@ public class PollutionStationApi {
         return rest.getForEntity(uriComponents.toUri(), String.class);
     }
 
-    public JSONArray entityToJsonArray(ResponseEntity<String> responseEntity) {
+    private JSONArray entityToJsonArray(ResponseEntity<String> responseEntity) {
         String response = responseEntity.getBody();
         JSONObject json = new JSONObject(response);
         return json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
     }
 
-    public void savePollutionStationByJsonArray(JSONArray jsonArray) {
+    private void savePollutionStationByJsonArray(JSONArray jsonArray) {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmX"), jsonObject.getDouble("dmY")));

@@ -62,7 +62,7 @@ public class PollutionDataApi {
     }
 
     // API에서 정보 가져오기
-    public ResponseEntity<String> fetchPollutionDataFromApi(String query) throws RestClientException {
+    private ResponseEntity<String> fetchPollutionDataFromApi(String query) throws RestClientException {
         RestTemplate rest = new RestTemplate();
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
@@ -82,7 +82,7 @@ public class PollutionDataApi {
     }
 
     // 가져온 정보를 JSONArray 형태로 변환하기
-    public JSONArray entityToJsonArray(ResponseEntity<String> responseEntity) throws JSONException, RestClientException {
+    private JSONArray entityToJsonArray(ResponseEntity<String> responseEntity) throws JSONException, RestClientException {
         String response = responseEntity.getBody();
         HttpStatus httpStatus = responseEntity.getStatusCode();
         if (!httpStatus.is2xxSuccessful()) {
@@ -93,7 +93,7 @@ public class PollutionDataApi {
     }
 
     // JSONArray 내부의 JSONObject 들을 Database 로 업로드하기
-    public void JsonObjectToDatabase(JSONObject jsonObject) throws JSONException {
+    private void JsonObjectToDatabase(JSONObject jsonObject) throws JSONException {
         String stationName = jsonObject.getString("stationName");
         List<Double> coords = PollutionStationApi.stationList.get(stationName);
 
