@@ -1,5 +1,6 @@
 package com.minidust.api.service;
 
+import com.minidust.api.dto.CoordsToAddrDto;
 import com.minidust.api.dto.SensorDto;
 import com.minidust.api.exception.DataNotFoundException;
 import com.minidust.api.models.Sensor;
@@ -51,7 +52,7 @@ public class SensorService {
     @Transactional
     public Sensor updateData(SensorDto sensorDto) {
         // Sensor 정보를 가져옵니다. 이미 ID에 대한 검사를 진행했으므로 NULL 가능성이 없습니다.
-        Sensor sensor = sensorRepository.findById(sensorDto.getId()).orElseThrow(() -> new IllegalArgumentException());
+        Sensor sensor = sensorRepository.findById(sensorDto.getId()).orElseThrow(IllegalArgumentException::new);
         String location = getLocation(sensorDto.getLongitude(), sensorDto.getLatitude());
         sensor.update(sensorDto, location);
         return sensor;
@@ -74,11 +75,11 @@ public class SensorService {
      * 측정기의 위치정보를 위한 함수입니다.
      */
     public String getLocation(double longitude, double latitude) {
-        List<String> result = BiCoordsToAddr.getAddressFromCoordinates(longitude, latitude);
+        CoordsToAddrDto addressFromCoordinates = BiCoordsToAddr.getAddressFromCoordinates(longitude, latitude);
         if (!isCorrectCoords(longitude, latitude)) {
             return "위치사용 불가";
         }
-        return result.get(0) + " " + result.get(2);
+        return addressFromCoordinates.getFirst() + addressFromCoordinates.getSecond();
     }
 
 
