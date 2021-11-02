@@ -1,9 +1,11 @@
 package com.minidust.api.domain.sensor.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.*;
 
+@Builder
 @Getter
 public class SensorDto {
 

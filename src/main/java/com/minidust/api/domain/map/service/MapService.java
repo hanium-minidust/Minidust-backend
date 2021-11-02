@@ -42,7 +42,8 @@ public class MapService {
         double longitude = jsonObject.getDouble("x");
         double latitude = jsonObject.getDouble("y");
 
-        return new AddrToCoordsDto(longitude, latitude);
+//        return new AddrToCoordsDto(longitude, latitude);
+        return AddrToCoordsDto.builder().longitude(longitude).latitude(latitude).build();
     }
 
     /**
