@@ -1,7 +1,7 @@
 package com.minidust.api.global.util;
 
-import com.minidust.api.domain.pollution.service.PollutionDataApi;
-import com.minidust.api.domain.pollution.service.PollutionStationApi;
+import com.minidust.api.domain.pollution.service.PollutionApiService;
+import com.minidust.api.domain.pollution.util.PollutionStationApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,17 +13,16 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class Scheduler {
-
-    private final PollutionDataApi pollutionDataAPI;
     private final PollutionStationApi pollutionStationApi;
+    private final PollutionApiService pollutionApiService;
 
     List<String> sidoName = Arrays.asList("서울", "경기");
 
     // 매 시간 5분에 미세먼지 오염도 정보를 업데이트 합니다.
     @Scheduled(cron = "0 5 * * * *")
     public void pollutionDataUpdater() {
-        for (String x : sidoName) {
-            pollutionDataAPI.updatePollutionData(x);
+        for (String query : sidoName) {
+            pollutionApiService.updatePollutionData(query);
         }
         System.out.println(new Date() + " 미세먼지 데이터가 업데이트 되었습니다.");
     }

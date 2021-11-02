@@ -1,7 +1,7 @@
 package com.minidust.api;
 
-import com.minidust.api.domain.pollution.service.PollutionDataApi;
-import com.minidust.api.domain.pollution.service.PollutionStationApi;
+import com.minidust.api.domain.pollution.util.PollutionDataApi;
+import com.minidust.api.domain.pollution.util.PollutionStationApi;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

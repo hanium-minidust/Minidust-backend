@@ -54,7 +54,6 @@ public class Sensor extends Timestamped {
     }
 
     public void update(SensorDto sensorDto, String location) {
-        this.id = sensorDto.getId();
         this.longitude = sensorDto.getLongitude();
         this.latitude = sensorDto.getLatitude();
         this.temperature = sensorDto.getTemperature();
