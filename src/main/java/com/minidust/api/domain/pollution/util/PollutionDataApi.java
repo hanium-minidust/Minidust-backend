@@ -1,6 +1,8 @@
 package com.minidust.api.domain.pollution.util;
 
 import com.minidust.api.domain.pollution.models.PollutionData;
+import com.minidust.api.domain.pollution.service.PollutionDataService;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,8 +19,11 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class PollutionDataApi {
     private static final String API_KEY = "rD91vycFGdhMeipqQIuYBD4bhZKf/vYOFsxWwoWwWlV9HLbonxD22rOLOiuEokmR9Ge2b7qCrqNUpHzSz7W7hQ==";
+
+    private final PollutionDataService pollutionDataService;
 
     /**
      * 미세먼지 API에서 미세먼지 정보 가져오기
@@ -86,7 +91,8 @@ public class PollutionDataApi {
     // JSONArray 내부의 JSONObject 들을 Database 로 업로드하기
     private PollutionData JsonObjectToPollutionData(JSONObject jsonObject) throws JSONException {
         String stationName = jsonObject.getString("stationName");
-        List<Double> coords = PollutionStationApi.stationList.get(stationName);
+//        List<Double> coords = PollutionStationApi.stationList.get(stationName);
+        List<Double> coords = pollutionDataService.getCoordsByStationName(stationName);
 
         long id = Math.abs(stationName.hashCode());
         PollutionData pollutionData = PollutionData.builder()

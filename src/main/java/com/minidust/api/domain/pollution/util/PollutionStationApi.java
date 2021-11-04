@@ -1,5 +1,6 @@
-package com.minidust.api.domain.pollution.service;
+package com.minidust.api.domain.pollution.util;
 
+import com.minidust.api.domain.pollution.models.PollutionStation;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,8 @@ public class PollutionStationApi {
     /**
      * 미세먼지 측정소 API에서 측정소, 위도, 경도 정보 가져오기
      */
-    public void updateStation(String query) {
+    public List<PollutionStation> updateStation(String query) {
+        ArrayList<PollutionStation> result = new ArrayList<>();
         try {
             ResponseEntity<String> responseEntity = fetchPollutionStationApi(query);
             HttpStatus httpStatus = responseEntity.getStatusCode();
@@ -35,7 +37,11 @@ public class PollutionStationApi {
             }
 
             JSONArray jsonArray = entityToJsonArray(responseEntity); // ResponseEntity -> JsonArray
-            savePollutionStationByJsonArray(jsonArray); // JsonArray -> Into HashMap
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                PollutionStation pollutionStation = jsonObjectToPollutionStationObject(jsonObject);
+                result.add(pollutionStation);
+            }
 
         } catch (RestClientException restClientException) {
             System.out.println("미세먼지 측정소 업데이트 부분 RESTClientException 발생");
@@ -45,6 +51,8 @@ public class PollutionStationApi {
             System.out.println("[WARN]" + new Date() + "미세먼지 측정소 업데이트 부분 Exception 발생");
             exception.printStackTrace();
         }
+
+        return result;
     }
 
     private ResponseEntity<String> fetchPollutionStationApi(String query) {
@@ -71,10 +79,27 @@ public class PollutionStationApi {
         return json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
     }
 
-    private void savePollutionStationByJsonArray(JSONArray jsonArray) {
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmX"), jsonObject.getDouble("dmY")));
-        }
+//    private void savePollutionStationByJsonArray(JSONArray jsonArray) {
+//        for (int i = 0; i < jsonArray.length(); i++) {
+//            JSONObject jsonObject = jsonArray.getJSONObject(i);
+//            stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmX"), jsonObject.getDouble("dmY")));
+//            PollutionStation tmp = PollutionStation.builder()
+//                    .stationName(jsonObject.getString("stationName"))
+//                    .latitude(jsonObject.getDouble("dmX"))
+//                    .longitude(jsonObject.getDouble("dmY"))
+//                    .build();
+//
+//            return tmp;
+//        }
+//    }
+
+    private PollutionStation jsonObjectToPollutionStationObject(JSONObject jsonObject) {
+        PollutionStation tmp = PollutionStation.builder()
+                .stationName(jsonObject.getString("stationName"))
+                .latitude(jsonObject.getDouble("dmX"))
+                .longitude(jsonObject.getDouble("dmY"))
+                .build();
+
+        return tmp;
     }
 }
