@@ -29,17 +29,4 @@ public class ApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(ApiApplication.class, args);
     }
-
-    @Bean
-    public CommandLineRunner runner(PollutionDataApi pollutionDataAPI, PollutionStationApi pollutionStationApi) {
-        return args -> {
-            System.out.println("현재시간 : " + new Date());
-
-            List<String> updateList = Arrays.asList("서울", "경기");
-            for (String x : updateList) {
-                pollutionStationApi.updateStation(x);
-                pollutionDataAPI.updatePollutionData(x);
-            }
-        };
-    }
 }
