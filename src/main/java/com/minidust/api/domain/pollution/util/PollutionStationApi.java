@@ -79,20 +79,6 @@ public class PollutionStationApi {
         return json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
     }
 
-//    private void savePollutionStationByJsonArray(JSONArray jsonArray) {
-//        for (int i = 0; i < jsonArray.length(); i++) {
-//            JSONObject jsonObject = jsonArray.getJSONObject(i);
-//            stationList.put(jsonObject.getString("stationName"), Arrays.asList(jsonObject.getDouble("dmX"), jsonObject.getDouble("dmY")));
-//            PollutionStation tmp = PollutionStation.builder()
-//                    .stationName(jsonObject.getString("stationName"))
-//                    .latitude(jsonObject.getDouble("dmX"))
-//                    .longitude(jsonObject.getDouble("dmY"))
-//                    .build();
-//
-//            return tmp;
-//        }
-//    }
-
     private PollutionStation jsonObjectToPollutionStationObject(JSONObject jsonObject) {
         PollutionStation tmp = PollutionStation.builder()
                 .stationName(jsonObject.getString("stationName"))
