@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,10 +17,11 @@ import javax.validation.constraints.DecimalMin;
 @Validated
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api")
 public class WeatherAPIController {
     private final WeatherService weatherService;
 
-    @GetMapping("/api/weather")
+    @GetMapping("/weather")
     public ResponseEntity<?> getWeatherFromCoords(@RequestParam @DecimalMin("123") @DecimalMax("133") double lon,
                                                   @RequestParam @DecimalMin("32") @DecimalMax("44") double lat) {
         WeatherDataDto weatherDataDto = weatherService.getWeatherFromCoords(lon, lat);

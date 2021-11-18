@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,15 +18,16 @@ import javax.validation.constraints.NotNull;
 
 @Validated
 @RestController
+@RequestMapping("/api/map")
 public class MapController {
 
-    @GetMapping("/api/map/addressToCoords")
+    @GetMapping("/addressToCoords")
     public ResponseEntity<Message> getCoordsFromAddress(@RequestParam @Length(min = 1, max = 3) @NotNull String query) {
         AddrToCoordsDto result = MapService.getCoordsFromAddress(query);
         return ResponseEntity.ok(Message.ok(result));
     }
 
-    @GetMapping("/api/map/coordsToAddress")
+    @GetMapping("/coordsToAddress")
     public ResponseEntity<Message> getAddressFromCoordinates(@RequestParam @DecimalMin("123") @DecimalMax("133") double lon,
                                                              @RequestParam @DecimalMin("32") @DecimalMax("44") double lat) {
         CoordsToAddrDto result = MapService.getAddressFromCoordinates(lon, lat);
