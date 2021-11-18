@@ -54,7 +54,7 @@ class SensorServiceTest {
         Sensor sensor1 = new Sensor(sensorDto, "경기도 용인시 처인구");
 
         // when
-        when(sensorRepository.save(any())).thenReturn(new Sensor(sensorDto));
+        when(sensorRepository.save(any())).thenReturn(new Sensor(sensorDto, "위치 정보 없음"));
         Sensor sensor = sensorService.createData(sensorDto);
 
         // Then
