@@ -88,7 +88,7 @@ public class PollutionDataApi {
         return json.getJSONObject("response").getJSONObject("body").getJSONArray("items");
     }
 
-    // JSONArray 내부의 JSONObject 들을 Database 로 업로드하기
+    // JSONArray 내부의 JSONObject 들을 PollutionData 객체로 맵핑하기
     private PollutionData JsonObjectToPollutionData(JSONObject jsonObject) throws JSONException {
         String stationName = jsonObject.getString("stationName");
 //        List<Double> coords = PollutionStationApi.stationList.get(stationName);

@@ -9,7 +9,9 @@ import com.minidust.api.domain.pollution.util.PollutionStationApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,12 +22,18 @@ public class PollutionApiService {
     private final PollutionRepository pollutionRepository;
     private final PollutionStationRepository pollutionStationRepository;
 
-    // TODO 이렇게 처리하면 기존에 존재했던게 업데이트가 불가능하다.
-
+    @Transactional
     public void updatePollutionData(String query) {
         List<PollutionData> pollutionDataList = pollutionDataApi.updatePollutionData(query);
-        // 리스트에서 꺼내서 기존 데이터가 있으면 업데이트, 없으면 새로 추가하는 로직이 필요하다.
-        pollutionRepository.saveAll(pollutionDataList);   }
+        for (PollutionData data : pollutionDataList) {
+            Optional<PollutionData> isExist = pollutionRepository.findById(data.getId());
+            if (isExist.isPresent()) {
+                isExist.get().update(data);
+            } else {
+                pollutionRepository.save(data);
+            }
+        }
+    }
 
     public void updatePollutionStation(String query) {
         List<PollutionStation> pollutionStationList = pollutionStationApi.updateStation(query);
