@@ -33,29 +33,16 @@ public class SensorService {
      * 미세먼지 측정기 데이터 생성/수정(CREATE, UPDATE)
      */
     @Transactional
-    public Sensor updateOrCreate(SensorDto sensorDto) {
-        if (isExistId(sensorDto.getId())) {
-            return updateData(sensorDto);
+    public Sensor upload(SensorDto sensorDto) {
+        Optional<Sensor> sensorOptional = sensorRepository.findById(sensorDto.getId());
+        if (sensorOptional.isPresent()) {
+            Sensor sensor = sensorOptional.get();
+            sensor.update(sensorDto, getLocation(sensorDto.getLongitude(), sensorDto.getLatitude()));
+            return sensor;
         } else {
-            return createData(sensorDto);
+            Sensor sensor = new Sensor(sensorDto, getLocation(sensorDto.getLongitude(), sensorDto.getLatitude()));
+            return sensorRepository.save(sensor);
         }
-    }
-
-    // 해당 ID값을 가진 데이터가 없으므로 생성합니다.
-    public Sensor createData(SensorDto sensorDto) {
-        String location = getLocation(sensorDto.getLongitude(), sensorDto.getLatitude());
-        Sensor sensor = new Sensor(sensorDto, location);
-        return sensorRepository.save(sensor);
-    }
-
-    // 해당 ID값을 가진 데이터가 있으므로 수정합니다.
-    @Transactional
-    public Sensor updateData(SensorDto sensorDto) {
-        // Sensor 정보를 가져옵니다. 이미 ID에 대한 검사를 진행했으므로 NULL 가능성이 없습니다.
-        Sensor sensor = sensorRepository.findById(sensorDto.getId()).orElseThrow(IllegalArgumentException::new);
-        String location = getLocation(sensorDto.getLongitude(), sensorDto.getLatitude());
-        sensor.update(sensorDto, location);
-        return sensor;
     }
 
     // 해당 ID값을 가진 데이터가 있는지 확인합니다.

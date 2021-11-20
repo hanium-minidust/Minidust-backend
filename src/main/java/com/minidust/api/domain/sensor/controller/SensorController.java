@@ -37,7 +37,7 @@ public class SensorController {
         if (errors.hasErrors()) {
             throw new IllegalArgumentException(errors.getAllErrors().get(0).getDefaultMessage());
         }
-        Sensor sensor = sensorService.updateOrCreate(sensorDto);
+        Sensor sensor = sensorService.upload(sensorDto);
         return ResponseEntity.ok(Message.ok(sensor));
     }
 
