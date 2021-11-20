@@ -32,7 +32,7 @@ public class SensorController {
         return ResponseEntity.ok(Message.ok(sensor));
     }
 
-    @PostMapping("/sensor")
+    @PostMapping("/sensor/new")
     public ResponseEntity<Message> uploadData(@RequestBody @Valid SensorDto sensorDto, BindingResult errors) {
         if (errors.hasErrors()) {
             throw new IllegalArgumentException(errors.getAllErrors().get(0).getDefaultMessage());
