@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.minidust'
-version = '1.0.3'
+version = '1.0.4'
 sourceCompatibility = "8"
 
 configurations {
@@ -32,10 +32,14 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation("org.junit.vintage:junit-vintage-engine") {
+        exclude group: "org.hamcrest", module: "hamcrest-core"
+    }
+
     implementation 'org.json:json:20210307'
     compileOnly "com.fasterxml.jackson.core:jackson-databind:2.9.4"
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 test {
