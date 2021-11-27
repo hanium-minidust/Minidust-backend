@@ -8,18 +8,15 @@
 ---
 #### 사용한 기술
 - Spring Boot
-- JPA
+- Spring Data JPA
 - MySQL
 - Swagger
 - Amazon EC2
 
 ---
 
-#### 시스템 구성도
-정리중
-
 #### ERD 다이어그램
-정리중
+![image](https://user-images.githubusercontent.com/71131071/142749050-9461dd56-5e34-4201-84ea-9f612b6268bf.png)
 
 #### API 문서(Swagger)
 - 클라우드 서비스 종료 관계로 PDF로 대체하였습니다.
