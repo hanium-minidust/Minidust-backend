@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface PollutionRepository extends JpaRepository<PollutionData, Long> {
+public interface PollutionRepository extends JpaRepository<PollutionData, String> {
     List<PollutionData> findAllBySidoName(String sidoName);
 }

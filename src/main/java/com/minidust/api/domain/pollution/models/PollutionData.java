@@ -2,6 +2,7 @@ package com.minidust.api.domain.pollution.models;
 
 
 import com.minidust.api.global.util.Timestamped;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,30 +16,20 @@ import javax.validation.constraints.*;
 @Builder
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "pollution_data")
 public class PollutionData extends Timestamped {
 
-    public PollutionData(Long id, String sidoName, String stationName, Double longitude, Double latitude, int pm25, int pm10) {
-        this.id = id;
-        this.sidoName = sidoName;
-        this.stationName = stationName;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.pm25 = pm25;
-        this.pm10 = pm10;
-    }
-
     @Id
-    private Long id;
+    @NotNull
+    @Column(nullable = false)
+    private String stationName;
 
     @NotNull
     @Column(nullable = false)
     private String sidoName;
 
-    @NotNull
-    @Column(nullable = false)
-    private String stationName;
 
     @NotNull
     @DecimalMin("123")

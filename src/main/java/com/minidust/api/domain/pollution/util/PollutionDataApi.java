@@ -91,14 +91,11 @@ public class PollutionDataApi {
     // JSONArray 내부의 JSONObject 들을 PollutionData 객체로 맵핑하기
     private PollutionData JsonObjectToPollutionData(JSONObject jsonObject) throws JSONException {
         String stationName = jsonObject.getString("stationName");
-//        List<Double> coords = PollutionStationApi.stationList.get(stationName);
         List<Double> coords = pollutionDataService.getCoordsByStationName(stationName);
 
-        long id = Math.abs(stationName.hashCode());
         PollutionData pollutionData = PollutionData.builder()
-                .id(id)
-                .sidoName(jsonObject.getString("sidoName"))
                 .stationName(jsonObject.getString("stationName"))
+                .sidoName(jsonObject.getString("sidoName"))
                 .latitude(coords.get(0))
                 .longitude(coords.get(1))
                 .pm10(jsonObject.getInt("pm10Value"))

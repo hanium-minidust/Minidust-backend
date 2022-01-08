@@ -6,7 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Builder
 @Entity
@@ -17,15 +20,12 @@ import javax.persistence.*;
 public class PollutionStation extends Timestamped {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    @Column(nullable = false)
+    String stationName;
 
     @Column(nullable = false)
     double latitude;
 
     @Column(nullable = false)
     double longitude;
-
-    @Column(nullable = false)
-    String stationName;
 }
