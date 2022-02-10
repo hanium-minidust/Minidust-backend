@@ -1,6 +1,6 @@
 package com.minidust.api.global.util;
 
-import com.minidust.api.domain.pollution.service.PollutionApiService;
+import com.minidust.api.domain.pollution.service.PollutionUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -13,14 +13,14 @@ import java.util.List;
 public class UpdaterOnload implements ApplicationRunner {
 
     @Autowired
-    private PollutionApiService pollutionApiService;
+    private PollutionUpdateService pollutionUpdateService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         List<String> cityName = Arrays.asList("서울", "경기");
         for (String city : cityName) {
-            pollutionApiService.updatePollutionStation(city);
-            pollutionApiService.updatePollutionData(city);
+            pollutionUpdateService.updatePollutionStation(city);
+            pollutionUpdateService.updatePollutionData(city);
         }
     }
 }

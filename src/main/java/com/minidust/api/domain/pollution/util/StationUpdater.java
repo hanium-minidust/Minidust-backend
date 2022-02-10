@@ -17,17 +17,18 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class PollutionStationApi {
+public class StationUpdater {
     private final PollutionAPI pollutionAPI;
 
-    public List<PollutionStation> updateStation(String query) {
+    public List<PollutionStation> updateStation(String sidoName) {
         ArrayList<PollutionStation> result = new ArrayList<>();
         try {
-            ResponseEntity<String> responseEntity = pollutionAPI.fetchByType(FetchType.STATION, query);
+            ResponseEntity<String> responseEntity = pollutionAPI.fetchByType(FetchType.STATION, sidoName);
             JSONArray jsonArray = pollutionAPI.parseToJsonArray(responseEntity);
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+
                 result.add(PollutionStation.builder()
                         .stationName(jsonObject.getString("stationName"))
                         .latitude(jsonObject.getDouble("dmX"))

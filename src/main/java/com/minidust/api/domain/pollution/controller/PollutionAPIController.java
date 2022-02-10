@@ -1,8 +1,8 @@
 package com.minidust.api.domain.pollution.controller;
 
-import com.minidust.api.domain.pollution.models.PollutionData;
-import com.minidust.api.domain.pollution.service.PollutionApiService;
+import com.minidust.api.domain.pollution.models.Pollution;
 import com.minidust.api.domain.pollution.service.PollutionDataService;
+import com.minidust.api.domain.pollution.service.PollutionUpdateService;
 import com.minidust.api.global.response.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,27 +18,27 @@ import java.util.List;
 @RestController
 public class PollutionAPIController {
 
-    private final PollutionApiService pollutionApiService;
+    private final PollutionUpdateService pollutionUpdateService;
     private final PollutionDataService pollutionDataService;
 
     @GetMapping
-    public ResponseEntity<Message> getAllDataBySidoName(@RequestParam String query) {
-        if (query.length() != 2) {
+    public ResponseEntity<Message> findByCityName(@RequestParam String cityName) {
+        if (cityName.length() != 2) {
             throw new IllegalArgumentException("올바른 주소 이름 형식이 아닙니다. 예시) 서울, 경기");
         }
-        List<PollutionData> result = pollutionDataService.getAllByCity(query);
+        List<Pollution> result = pollutionDataService.findByCityName(cityName);
         return ResponseEntity.ok(Message.ok(result));
     }
 
     @GetMapping("/update/data")
-    public ResponseEntity<Message> updateDataDirect(@RequestParam String query) {
-        pollutionApiService.updatePollutionData(query);
+    public ResponseEntity<Message> updateDust(@RequestParam String sidoName) {
+        pollutionUpdateService.updatePollutionData(sidoName);
         return ResponseEntity.ok(Message.ok());
     }
 
     @GetMapping("/update/station")
-    public ResponseEntity<Message> updateStationDirect(@RequestParam String query) {
-        pollutionApiService.updatePollutionStation(query);
+    public ResponseEntity<Message> updateStation(@RequestParam String sidoName) {
+        pollutionUpdateService.updatePollutionStation(sidoName);
         return ResponseEntity.ok(Message.ok());
     }
 }

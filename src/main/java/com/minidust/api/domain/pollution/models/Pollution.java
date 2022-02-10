@@ -19,7 +19,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "pollution_data")
-public class PollutionData extends Timestamped {
+public class Pollution extends Timestamped {
 
     @Id
     @NotNull
@@ -55,7 +55,7 @@ public class PollutionData extends Timestamped {
     @Column(nullable = false)
     private int pm10;
 
-    public void update(PollutionData pollutionData) {
+    public void update(Pollution pollutionData) {
         this.pm10 = pollutionData.getPm10();
         this.pm25 = pollutionData.getPm25();
     }
