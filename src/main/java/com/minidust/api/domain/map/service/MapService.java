@@ -83,4 +83,10 @@ public class MapService {
 
         return new CoordsToAddrDto(firstAddress, firstAlias, secondAddress, thirdAddress);
     }
+
+    public static boolean isCorrectCoords(double longitude, double latitude) {
+        int longitudeInt = (int) longitude; // 123~133
+        int latitudeInt = (int) latitude; // 32~44
+        return longitudeInt < 134 && longitudeInt > 122 && latitudeInt < 45 && latitudeInt > 31;
+    }
 }

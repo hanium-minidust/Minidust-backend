@@ -8,13 +8,14 @@ import com.minidust.api.domain.sensor.repository.SensorRepository;
 import com.minidust.api.global.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class SensorService {
     private final SensorRepository sensorRepository;
 
@@ -45,15 +46,10 @@ public class SensorService {
         }
     }
 
-    // 해당 ID값을 가진 데이터가 있는지 확인합니다.
-    public boolean isExistId(int id) {
-        Optional<Sensor> sensor = sensorRepository.findById(id);
-        return sensor.isPresent();
-    }
-
     /**
      * 미세먼지 측정기 데이터 삭제(DELETE)
      */
+    @Transactional
     public void deleteById(int id) {
         sensorRepository.deleteById(id);
     }
@@ -63,17 +59,9 @@ public class SensorService {
      */
     public String getLocation(double longitude, double latitude) {
         CoordsToAddrDto addressFromCoordinates = MapService.getAddressFromCoordinates(longitude, latitude);
-        if (!isCorrectCoords(longitude, latitude)) {
+        if (!MapService.isCorrectCoords(longitude, latitude)) {
             return "위치사용 불가";
         }
         return addressFromCoordinates.getFirst() + addressFromCoordinates.getSecond();
-    }
-
-
-    // 위도와 경도가 범위 내에 있는지 확인합니다.
-    public boolean isCorrectCoords(double longitude, double latitude) {
-        int longitudeInt = (int) longitude; // 123~133
-        int latitudeInt = (int) latitude; // 32~44
-        return longitudeInt < 134 && longitudeInt > 122 && latitudeInt < 45 && latitudeInt > 31;
     }
 }
