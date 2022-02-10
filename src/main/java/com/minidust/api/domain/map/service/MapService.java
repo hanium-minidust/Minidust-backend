@@ -35,14 +35,15 @@ public class MapService {
 
         JSONObject json = new JSONObject(response);
         JSONArray values = json.getJSONArray("addresses");
+
+        // 결과값이 존재하지 않는 경우
         if (values.length() == 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("해당 주소로 조회할 수 없습니다.");
         }
         JSONObject jsonObject = (JSONObject) values.get(0);
         double longitude = jsonObject.getDouble("x");
         double latitude = jsonObject.getDouble("y");
 
-//        return new AddrToCoordsDto(longitude, latitude);
         return AddrToCoordsDto.builder().longitude(longitude).latitude(latitude).build();
     }
 
@@ -68,6 +69,12 @@ public class MapService {
 
         JSONObject json = new JSONObject(response);
         JSONArray values = json.getJSONArray("results");
+
+        // 결과값이 존재하지 않는 경우
+        if (values.length() == 0) {
+            throw new IllegalArgumentException("해당 좌표로 주소를 조회할 수 없습니다.");
+        }
+
         JSONObject jsonObject = values.getJSONObject(0).getJSONObject("region");
         String firstAddress = jsonObject.getJSONObject("area1").getString("name"); // name -> 경기도, alias -> 경기, 기상 API 에 따라 바꿔써야 할 부분
         String firstAlias = jsonObject.getJSONObject("area1").getString("alias");
