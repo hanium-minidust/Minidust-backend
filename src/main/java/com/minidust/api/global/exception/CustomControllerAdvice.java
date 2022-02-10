@@ -10,7 +10,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ConstraintViolationException;
 
 @ControllerAdvice
-public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomControllerAdvice extends ResponseEntityExceptionHandler {
+    // Controller에서 이뤄지는 Validation 이 실패할 경우 발생합니다.
     @ExceptionHandler(value = {ConstraintViolationException.class})
     protected ResponseEntity<?> handleConstraintViolation(ConstraintViolationException e) {
         return new ResponseEntity<>(Message.badRequest(e.getMessage()), HttpStatus.BAD_REQUEST);
