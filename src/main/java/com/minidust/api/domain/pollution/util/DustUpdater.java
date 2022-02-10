@@ -38,7 +38,7 @@ public class DustUpdater {
                             .stationName(jsonObject.getString("stationName"))
                             .sidoName(jsonObject.getString("sidoName"))
                             .latitude(coords.getLatitude())
-                            .longitude(coords.getLatitude())
+                            .longitude(coords.getLongitude())
                             .pm10(jsonObject.getInt("pm10Value"))
                             .pm25(jsonObject.getInt("pm25Value"))
                             .build());
