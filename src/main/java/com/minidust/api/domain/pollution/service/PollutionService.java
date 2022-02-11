@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PollutionDataService {
+public class PollutionService {
 
     private final PollutionRepository pollutionRepository;
     private final PollutionStationRepository pollutionStationRepository;

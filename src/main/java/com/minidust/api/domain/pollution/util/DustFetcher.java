@@ -2,7 +2,7 @@ package com.minidust.api.domain.pollution.util;
 
 import com.minidust.api.domain.pollution.dto.CoordsDto;
 import com.minidust.api.domain.pollution.models.Pollution;
-import com.minidust.api.domain.pollution.service.PollutionDataService;
+import com.minidust.api.domain.pollution.service.PollutionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -18,12 +18,12 @@ import java.util.ArrayList;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class DustUpdater {
+public class DustFetcher {
 
-    private final PollutionDataService pollutionDataService;
+    private final PollutionService pollutionService;
     private final PollutionAPI pollutionAPI;
 
-    public ArrayList<Pollution> updateDust(String sidoName) {
+    public ArrayList<Pollution> fetchDust(String sidoName) {
         ArrayList<Pollution> pollutionDataList = new ArrayList<>();
         try {
             ResponseEntity<String> responseEntity = pollutionAPI.fetchByType(FetchType.PM, sidoName);
@@ -32,7 +32,7 @@ public class DustUpdater {
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    CoordsDto coords = pollutionDataService.getCoordsByStationName(jsonObject.getString("stationName"));
+                    CoordsDto coords = pollutionService.getCoordsByStationName(jsonObject.getString("stationName"));
 
                     pollutionDataList.add(Pollution.builder()
                             .stationName(jsonObject.getString("stationName"))

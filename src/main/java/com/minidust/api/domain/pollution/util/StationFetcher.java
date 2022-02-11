@@ -17,10 +17,10 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class StationUpdater {
+public class StationFetcher {
     private final PollutionAPI pollutionAPI;
 
-    public List<PollutionStation> updateStation(String sidoName) {
+    public List<PollutionStation> fetchStation(String sidoName) {
         ArrayList<PollutionStation> result = new ArrayList<>();
         try {
             ResponseEntity<String> responseEntity = pollutionAPI.fetchByType(FetchType.STATION, sidoName);

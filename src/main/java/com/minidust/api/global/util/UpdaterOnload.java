@@ -19,8 +19,8 @@ public class UpdaterOnload implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         List<String> cityName = Arrays.asList("서울", "경기");
         for (String city : cityName) {
-            pollutionUpdateService.updatePollutionStation(city);
-            pollutionUpdateService.updatePollutionData(city);
+            pollutionUpdateService.updateStation(city);
+            pollutionUpdateService.updateDust(city);
         }
     }
 }

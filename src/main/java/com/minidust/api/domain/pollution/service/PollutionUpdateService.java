@@ -4,8 +4,8 @@ import com.minidust.api.domain.pollution.models.Pollution;
 import com.minidust.api.domain.pollution.models.PollutionStation;
 import com.minidust.api.domain.pollution.repository.PollutionRepository;
 import com.minidust.api.domain.pollution.repository.PollutionStationRepository;
-import com.minidust.api.domain.pollution.util.DustUpdater;
-import com.minidust.api.domain.pollution.util.StationUpdater;
+import com.minidust.api.domain.pollution.util.DustFetcher;
+import com.minidust.api.domain.pollution.util.StationFetcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,14 +17,14 @@ import java.util.Optional;
 @Transactional
 @Service
 public class PollutionUpdateService {
-    private final DustUpdater dustUpdater;
-    private final StationUpdater stationUpdater;
+    private final DustFetcher dustFetcher;
+    private final StationFetcher stationFetcher;
 
     private final PollutionRepository pollutionRepository;
     private final PollutionStationRepository pollutionStationRepository;
 
-    public void updatePollutionData(String sidoName) {
-        List<Pollution> pollutionDataList = dustUpdater.updateDust(sidoName);
+    public void updateDust(String sidoName) {
+        List<Pollution> pollutionDataList = dustFetcher.fetchDust(sidoName);
 
         for (Pollution data : pollutionDataList) {
             Optional<Pollution> pollutionOptional = pollutionRepository.findById(data.getStationName());
@@ -37,8 +37,8 @@ public class PollutionUpdateService {
         }
     }
 
-    public void updatePollutionStation(String sidoName) {
-        List<PollutionStation> pollutionStationList = stationUpdater.updateStation(sidoName);
+    public void updateStation(String sidoName) {
+        List<PollutionStation> pollutionStationList = stationFetcher.fetchStation(sidoName);
         pollutionStationRepository.saveAll(pollutionStationList);
     }
 }
