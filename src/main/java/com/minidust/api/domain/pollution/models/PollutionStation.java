@@ -28,4 +28,7 @@ public class PollutionStation extends Timestamped {
 
     @Column(nullable = false)
     double longitude;
+
+    @Column(nullable = false)
+    String sidoName;
 }

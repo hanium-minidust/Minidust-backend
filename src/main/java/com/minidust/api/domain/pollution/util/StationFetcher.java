@@ -33,6 +33,7 @@ public class StationFetcher {
                         .stationName(jsonObject.getString("stationName"))
                         .latitude(jsonObject.getDouble("dmX"))
                         .longitude(jsonObject.getDouble("dmY"))
+                        .sidoName(sidoName)
                         .build());
             }
 
