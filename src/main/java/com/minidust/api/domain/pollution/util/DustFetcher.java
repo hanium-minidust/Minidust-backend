@@ -1,8 +1,8 @@
 package com.minidust.api.domain.pollution.util;
 
-import com.minidust.api.domain.pollution.dto.CoordsDto;
 import com.minidust.api.domain.pollution.models.Pollution;
-import com.minidust.api.domain.pollution.service.PollutionService;
+import com.minidust.api.domain.pollution.models.PollutionStation;
+import com.minidust.api.domain.pollution.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -14,13 +14,13 @@ import org.springframework.web.client.RestClientException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class DustFetcher {
-
-    private final PollutionService pollutionService;
+    private final StationService stationService;
     private final PollutionAPI pollutionAPI;
 
     public ArrayList<Pollution> fetchDust(String sidoName) {
@@ -28,17 +28,18 @@ public class DustFetcher {
         try {
             ResponseEntity<String> responseEntity = pollutionAPI.fetchByType(FetchType.PM, sidoName);
             JSONArray jsonArray = pollutionAPI.parseToJsonArray(responseEntity);
+            HashMap<String, PollutionStation> stationMap = stationService.findAllCoordsBySidoName(sidoName);
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    CoordsDto coords = pollutionService.getCoordsByStationName(jsonObject.getString("stationName"));
+                    PollutionStation station = stationMap.get(jsonObject.getString("stationName"));
 
                     pollutionDataList.add(Pollution.builder()
                             .stationName(jsonObject.getString("stationName"))
                             .sidoName(jsonObject.getString("sidoName"))
-                            .latitude(coords.getLatitude())
-                            .longitude(coords.getLongitude())
+                            .latitude(station.getLatitude())
+                            .longitude(station.getLongitude())
                             .pm10(jsonObject.getInt("pm10Value"))
                             .pm25(jsonObject.getInt("pm25Value"))
                             .build());
