@@ -2,7 +2,7 @@ package com.minidust.api.domain.sensor.service;
 
 import com.minidust.api.domain.map.dto.CoordsToAddrDto;
 import com.minidust.api.domain.map.service.MapService;
-import com.minidust.api.domain.sensor.dto.SensorDto;
+import com.minidust.api.domain.sensor.dto.SensorInputDto;
 import com.minidust.api.domain.sensor.models.Sensor;
 import com.minidust.api.domain.sensor.repository.SensorRepository;
 import com.minidust.api.global.exception.DataNotFoundException;
@@ -34,14 +34,18 @@ public class SensorService {
      * 미세먼지 측정기 데이터 생성/수정(CREATE, UPDATE)
      */
     @Transactional
-    public Sensor upload(SensorDto sensorDto) {
-        Optional<Sensor> sensorOptional = sensorRepository.findById(sensorDto.getId());
+    public Sensor upload(SensorInputDto sensorInputDto) {
+        Optional<Sensor> sensorOptional = sensorRepository.findById(sensorInputDto.getId());
         if (sensorOptional.isPresent()) {
             Sensor sensor = sensorOptional.get();
-            sensor.update(sensorDto, getLocation(sensorDto.getLongitude(), sensorDto.getLatitude()));
+            if (sensorInputDto.getLongitude() == sensor.getLongitude() && sensorInputDto.getLatitude() == sensor.getLatitude()) {
+                sensor.update(sensorInputDto, sensor.getLocation());
+            } else {
+                sensor.update(sensorInputDto, getLocation(sensorInputDto.getLongitude(), sensorInputDto.getLatitude()));
+            }
             return sensor;
         } else {
-            Sensor sensor = new Sensor(sensorDto, getLocation(sensorDto.getLongitude(), sensorDto.getLatitude()));
+            Sensor sensor = new Sensor(sensorInputDto, getLocation(sensorInputDto.getLongitude(), sensorInputDto.getLatitude()));
             return sensorRepository.save(sensor);
         }
     }

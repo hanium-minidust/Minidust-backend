@@ -5,6 +5,7 @@ import com.minidust.api.domain.pollution.service.PollutionService;
 import com.minidust.api.domain.pollution.service.PollutionUpdateService;
 import com.minidust.api.global.response.Message;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/api/pollution")
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class PollutionController {
         if (cityName.length() != 2) {
             throw new IllegalArgumentException("올바른 주소 이름 형식이 아닙니다. 예시) 서울, 경기");
         }
-        List<Pollution> result = pollutionService.findAllByName(cityName);
+        List<PollutionDto> result = pollutionService.findAllByName(cityName).stream().map(PollutionDto::new).collect(Collectors.toList());
         return ResponseEntity.ok(Message.ok(result));
     }
 
@@ -44,5 +46,22 @@ public class PollutionController {
     public ResponseEntity<Message> updateStation(@RequestParam("query") String sidoName) {
         pollutionUpdateService.updateStation(sidoName);
         return ResponseEntity.ok(Message.ok());
+    }
+
+    @Data
+    static class PollutionDto {
+        private String stationName;
+        private Double longitude;
+        private Double latitude;
+        private int pm25;
+        private int pm10;
+
+        public PollutionDto(Pollution pollution) {
+            this.stationName = pollution.getStationName();
+            this.longitude = pollution.getLongitude();
+            this.latitude = pollution.getLatitude();
+            this.pm10 = pollution.getPm10();
+            this.pm25 = pollution.getPm25();
+        }
     }
 }
