@@ -11,7 +11,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @Builder
 @Getter
-public class SensorDto {
+public class SensorInputDto {
 
     @NotNull(message = "ID의 값은 빈칸일 수 없습니다.")
     private int id;

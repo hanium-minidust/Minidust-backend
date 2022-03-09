@@ -1,6 +1,6 @@
 package com.minidust.api.domain.sensor.models;
 
-import com.minidust.api.domain.sensor.dto.SensorDto;
+import com.minidust.api.domain.sensor.dto.SensorInputDto;
 import com.minidust.api.global.util.Timestamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,24 +42,24 @@ public class Sensor extends Timestamped {
     @Column(nullable = false)
     private String location;
 
-    public Sensor(SensorDto sensorDto, String location) {
-        this.id = sensorDto.getId();
-        this.longitude = sensorDto.getLongitude();
-        this.latitude = sensorDto.getLatitude();
-        this.temperature = sensorDto.getTemperature();
-        this.humidity = sensorDto.getHumidity();
-        this.pm25 = sensorDto.getPm25();
-        this.pm10 = sensorDto.getPm10();
+    public Sensor(SensorInputDto sensorInputDto, String location) {
+        this.id = sensorInputDto.getId();
+        this.longitude = sensorInputDto.getLongitude();
+        this.latitude = sensorInputDto.getLatitude();
+        this.temperature = sensorInputDto.getTemperature();
+        this.humidity = sensorInputDto.getHumidity();
+        this.pm25 = sensorInputDto.getPm25();
+        this.pm10 = sensorInputDto.getPm10();
         this.location = location;
     }
 
-    public void update(SensorDto sensorDto, String location) {
-        this.longitude = sensorDto.getLongitude();
-        this.latitude = sensorDto.getLatitude();
-        this.temperature = sensorDto.getTemperature();
-        this.humidity = sensorDto.getHumidity();
-        this.pm25 = sensorDto.getPm25();
-        this.pm10 = sensorDto.getPm10();
+    public void update(SensorInputDto sensorInputDto, String location) {
+        this.longitude = sensorInputDto.getLongitude();
+        this.latitude = sensorInputDto.getLatitude();
+        this.temperature = sensorInputDto.getTemperature();
+        this.humidity = sensorInputDto.getHumidity();
+        this.pm25 = sensorInputDto.getPm25();
+        this.pm10 = sensorInputDto.getPm10();
         this.location = location;
     }
 }

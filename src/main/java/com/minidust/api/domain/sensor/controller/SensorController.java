@@ -1,7 +1,7 @@
 package com.minidust.api.domain.sensor.controller;
 
-import com.minidust.api.domain.sensor.dto.SensorDto;
-import com.minidust.api.domain.sensor.models.Sensor;
+import com.minidust.api.domain.sensor.dto.SensorInputDto;
+import com.minidust.api.domain.sensor.dto.SensorOutputDto;
 import com.minidust.api.domain.sensor.service.SensorService;
 import com.minidust.api.global.response.Message;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc <- 공부
 
@@ -22,22 +23,23 @@ public class SensorController {
 
     @GetMapping("/sensor")
     public ResponseEntity<Message> findAll() {
-        List<Sensor> result = sensorService.findAll();
+        List<SensorOutputDto> result = sensorService.findAll().stream().map(SensorOutputDto::new).collect(Collectors.toList());
         return ResponseEntity.ok(Message.ok(result));
     }
 
     @GetMapping("/sensor/{id}")
     public ResponseEntity<Message> findById(@PathVariable int id) {
-        Sensor sensor = sensorService.findById(id);
+        SensorOutputDto sensor = new SensorOutputDto(sensorService.findById(id));
         return ResponseEntity.ok(Message.ok(sensor));
     }
 
     @PostMapping("/sensor/new")
-    public ResponseEntity<Message> uploadData(@RequestBody @Valid SensorDto sensorDto, BindingResult errors) {
+    public ResponseEntity<Message> uploadData(@RequestBody @Valid SensorInputDto sensorInputDto, BindingResult errors) {
         if (errors.hasErrors()) {
             throw new IllegalArgumentException(errors.getAllErrors().get(0).getDefaultMessage());
         }
-        Sensor sensor = sensorService.upload(sensorDto);
+
+        SensorOutputDto sensor = new SensorOutputDto(sensorService.upload(sensorInputDto));
         return ResponseEntity.ok(Message.ok(sensor));
     }
 
