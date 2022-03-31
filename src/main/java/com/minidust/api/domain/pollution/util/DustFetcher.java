@@ -8,13 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -22,39 +20,38 @@ import java.util.HashMap;
 public class DustFetcher {
     private final StationService stationService;
     private final PollutionAPI pollutionAPI;
+    private static HashMap<String, PollutionStation> stationMap;
 
     public ArrayList<Pollution> fetchDust(String sidoName) {
-        ArrayList<Pollution> pollutionDataList = new ArrayList<>();
-        try {
-            ResponseEntity<String> responseEntity = pollutionAPI.fetchByType(FetchType.PM, sidoName);
-            JSONArray jsonArray = pollutionAPI.parseToJsonArray(responseEntity);
-            HashMap<String, PollutionStation> stationMap = stationService.findAllCoordsBySidoName(sidoName);
+        JSONArray jsonArray = pollutionAPI.fetchByType(FetchType.PM, sidoName);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    PollutionStation station = stationMap.get(jsonObject.getString("stationName"));
+        ArrayList<Pollution> pollutionList = new ArrayList<>();
+        stationMap = stationService.findAllCoordsBySidoName(sidoName);
 
-                    pollutionDataList.add(Pollution.builder()
-                            .stationName(jsonObject.getString("stationName"))
-                            .sidoName(jsonObject.getString("sidoName"))
-                            .latitude(station.getLatitude())
-                            .longitude(station.getLongitude())
-                            .pm10(jsonObject.getInt("pm10Value"))
-                            .pm25(jsonObject.getInt("pm25Value"))
-                            .build());
-
-                } catch (JSONException e) {
-                } // pm10Value or pm25Value 에 숫자값이 아닌 값이 있을경우 JSONException 발생 가능
-            }
-        } catch (RestClientException e) { // 서버에 접속이 불가능할 경우(500 에러 등)
-            log.warn("[미세먼지 측정 API] RESTClientException 발생" + LocalDateTime.now());
-        } catch (JSONException e) { // ResponseEntity -> JSON 과정에서 JSON 형식이 아닌것을 받아 왔을때 발생(통신장애, XML 받음 등)
-            log.warn("[미세먼지 측정 API] JSONException 발생" + LocalDateTime.now());
-        } catch (Exception e) { // 예상치 못한 예외 발생으로 서버 다운을 방지
-            log.warn("[미세먼지 측정 API]" + e.getCause().toString() + " 발생" + LocalDateTime.now());
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Optional<Pollution> entity = convertJsonToEntity(jsonObject);
+            entity.ifPresent(pollutionList::add);
         }
 
-        return pollutionDataList;
+        return pollutionList;
+    }
+
+    private Optional<Pollution> convertJsonToEntity(JSONObject jsonObject) {
+        try {
+            PollutionStation station = stationMap.get(jsonObject.getString("stationName"));
+
+            return Optional.of(Pollution.builder()
+                    .stationName(jsonObject.getString("stationName"))
+                    .sidoName(jsonObject.getString("sidoName"))
+                    .latitude(station.getLatitude())
+                    .longitude(station.getLongitude())
+                    .pm10(jsonObject.getInt("pm10Value"))
+                    .pm25(jsonObject.getInt("pm25Value"))
+                    .build());
+
+        } catch (JSONException e) {
+            return Optional.empty();
+        }
     }
 }
