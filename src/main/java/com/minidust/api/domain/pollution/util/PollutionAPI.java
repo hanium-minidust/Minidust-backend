@@ -1,5 +1,6 @@
 package com.minidust.api.domain.pollution.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,14 +12,15 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 
+@Slf4j
 @Component
 public class PollutionAPI {
     private static final String API_KEY = "rD91vycFGdhMeipqQIuYBD4bhZKf/vYOFsxWwoWwWlV9HLbonxD22rOLOiuEokmR9Ge2b7qCrqNUpHzSz7W7hQ==";
     private static final String baseUrl = "http://apis.data.go.kr/B552584/";
 
-    public ResponseEntity<String> fetchByType(FetchType fetchType, String query) throws RestClientException {
-        RestTemplate rest = new RestTemplate();
+    public JSONArray fetchByType(FetchType fetchType, String query) {
         String url = "";
         String queryParamName = "";
         if (fetchType == FetchType.PM) {
@@ -40,10 +42,21 @@ public class PollutionAPI {
                 .encode()
                 .build();
 
-        return rest.getForEntity(uriComponents.toUri(), String.class);
+        try {
+            ResponseEntity<String> forEntity = new RestTemplate().getForEntity(uriComponents.toUri(), String.class);
+            return parseToJsonArray(forEntity);
+        } catch (RestClientException e) {
+            log.warn("[RESTClientException 발생] " + LocalDateTime.now() + " 시도한 파라미터 : " + fetchType + " + " + query);
+            return new JSONArray(); // 아무것도 못받아왔을때는 빈 배열을 리턴한다.
+        }
     }
 
-    public JSONArray parseToJsonArray(ResponseEntity<String> responseEntity) throws JSONException {
-        return new JSONObject(responseEntity.getBody()).getJSONObject("response").getJSONObject("body").getJSONArray("items");
+    // 정상적이지 않다면 빈 배열을 반환해서 결과값을 받아 로직을 실행하는 곳에서 반복문이 돌지 않도록 합니다.
+    public JSONArray parseToJsonArray(ResponseEntity<String> responseEntity) {
+        try {
+            return new JSONObject(responseEntity.getBody()).getJSONObject("response").getJSONObject("body").getJSONArray("items");
+        } catch (JSONException e) {
+            return new JSONArray();
+        }
     }
 }
