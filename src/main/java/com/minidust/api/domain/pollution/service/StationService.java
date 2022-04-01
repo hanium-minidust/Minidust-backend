@@ -1,7 +1,8 @@
 package com.minidust.api.domain.pollution.service;
 
 import com.minidust.api.domain.pollution.models.PollutionStation;
-import com.minidust.api.domain.pollution.repository.PollutionStationRepository;
+import com.minidust.api.domain.pollution.repository.StationRepository;
+import com.minidust.api.domain.pollution.util.StationFetcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,21 +13,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StationService {
 
-    private final PollutionStationRepository pollutionStationRepository;
+    private final StationFetcher stationFetcher;
+    private final StationRepository stationRepository;
 
     public PollutionStation findCoordsByName(String stationName) {
-        PollutionStation pollutionStation = pollutionStationRepository.findByStationName(stationName);
+        PollutionStation pollutionStation = stationRepository.findByStationName(stationName);
         return pollutionStation;
     }
 
-    public HashMap<String, PollutionStation> findAllCoordsBySidoName(String sidoName) {
-        List<PollutionStation> stationInSido = pollutionStationRepository.findAllBysidoName(sidoName);
+    public HashMap<String, PollutionStation> findCoordsBySidoName(String sidoName) {
+        List<PollutionStation> stationList = stationRepository.findAllBysidoName(sidoName);
         HashMap<String, PollutionStation> stationMap = new HashMap<>();
 
-        for (PollutionStation station : stationInSido) {
-            stationMap.put(station.getStationName(), station);
-        }
-
+        stationList.forEach(tmp -> stationMap.put(tmp.getStationName(), tmp));
         return stationMap;
+    }
+
+    public void updateStation(String sidoName) {
+        List<PollutionStation> stationList = stationFetcher.fetchStation(sidoName);
+        stationRepository.saveAll(stationList);
     }
 }

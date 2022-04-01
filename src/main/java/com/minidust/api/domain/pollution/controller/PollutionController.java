@@ -2,7 +2,7 @@ package com.minidust.api.domain.pollution.controller;
 
 import com.minidust.api.domain.pollution.models.Pollution;
 import com.minidust.api.domain.pollution.service.PollutionService;
-import com.minidust.api.domain.pollution.service.PollutionUpdateService;
+import com.minidust.api.domain.pollution.service.StationService;
 import com.minidust.api.global.response.Message;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 public class PollutionController {
 
-    private final PollutionUpdateService pollutionUpdateService;
+    private final StationService stationService;
     private final PollutionService pollutionService;
 
     @GetMapping
@@ -37,14 +37,14 @@ public class PollutionController {
     @GetMapping("/update/data")
     @ApiOperation(value = "미세먼지 정보 업데이트", notes = "미세먼지 정보 업데이트를 위한 컨트롤러 입니다.")
     public ResponseEntity<Message> updateDust(@RequestParam("query") String sidoName) {
-        pollutionUpdateService.updateDust(sidoName);
+        pollutionService.updateDust(sidoName);
         return ResponseEntity.ok(Message.ok());
     }
 
     @GetMapping("/update/station")
     @ApiOperation(value = "미세먼지 측정소 정보 업데이트", notes = "미세먼지 측정소 정보 업데이트를 위한 컨트롤러 입니다.")
     public ResponseEntity<Message> updateStation(@RequestParam("query") String sidoName) {
-        pollutionUpdateService.updateStation(sidoName);
+        stationService.updateStation(sidoName);
         return ResponseEntity.ok(Message.ok());
     }
 
