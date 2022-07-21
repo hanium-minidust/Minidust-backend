@@ -36,7 +36,7 @@ public class SensorController {
         return ResponseEntity.ok(Message.ok(sensor));
     }
 
-    @PostMapping("/sensor/new")
+    @PostMapping("/sensor")
     @ApiOperation(value = "새 센서 데이터 추가", notes = "새로운 센서 데이터를 추가합니다.")
     public ResponseEntity<Message> uploadData(@RequestBody @Valid SensorInputDto sensorInputDto, BindingResult errors) {
         if (errors.hasErrors()) {
